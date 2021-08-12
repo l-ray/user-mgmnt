@@ -65,7 +65,7 @@
         <weld.version>4.0.2.Final</weld.version>
 
         <!-- By default, skip tests -->
-        <skip.unit.tests>true</skip.unit.tests>
+        <skip.unit.tests>false</skip.unit.tests>
         <skip.integration.tests>true</skip.integration.tests>
 
     </properties>

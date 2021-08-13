@@ -10,9 +10,16 @@
     <!-- Configuration to be used when the WildFly managed profile is active -->
     <container qualifier="wildfly-managed">
         <configuration>
+            <property name="jbossHome">/opt/wildfly-preview-24.0.1.Final</property>
+            <property name="serverConfig">standalone-full.xml</property>
+            <property name="allowConnectingToRunningServer">true</property>
+        </configuration>
+    </container>
+
+    <container qualifier="wildfly-embedded">
+        <configuration>
             <!--<property name="jbossHome">${jbossHome:target/wildfly-18.0.1.Final}</property>-->
             <property name="serverConfig">standalone-full.xml</property>
         </configuration>
     </container>
-
 </arquillian>

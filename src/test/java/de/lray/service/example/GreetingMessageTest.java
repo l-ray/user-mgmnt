@@ -1,7 +1,6 @@
-package de.lray.service.user.example;
+package de.lray.service.example;
 
 
-import de.lray.service.user.GreetingMessage;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

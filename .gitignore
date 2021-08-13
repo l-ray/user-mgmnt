@@ -21,3 +21,9 @@ jboss/server/minimal/work/**/*
 .gradle/**/*
 build/
 target/
+
+.idea
+*.iml
+*.ipr
+*.iws
+

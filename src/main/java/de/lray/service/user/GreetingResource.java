@@ -13,14 +13,12 @@ import static jakarta.ws.rs.core.Response.ok;
 
 @Path("greeting")
 @RequestScoped
-public class GreetingResource {
+public class GreetingResource implements GreetingApi {
 
     @Inject
     private GreetingService greetingService;
 
-    @GET
-    @Path("{name}")
-    @Produces(MediaType.APPLICATION_JSON)
+    @Override
     public Response greeting(@PathParam("name") String name) {
         return ok(this.greetingService.buildGreetingMessage(name)).build();
     }

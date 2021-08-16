@@ -71,6 +71,9 @@
         <skip.unit.tests>false</skip.unit.tests>
         <skip.integration.tests>true</skip.integration.tests>
 
+        <sonar.organization>l-ray</sonar.organization>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+
     </properties>
     <dependencyManagement>
         <dependencies>

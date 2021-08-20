@@ -1,8 +1,9 @@
-package de.lray.service.user.example.it;
+package de.lray.service.example.it;
 
-import de.lray.service.user.GreetingMessage;
-import de.lray.service.user.GreetingResource;
-import de.lray.service.user.GreetingService;
+import de.lray.service.example.GreetingApi;
+import de.lray.service.example.GreetingMessage;
+import de.lray.service.example.GreetingResource;
+import de.lray.service.example.GreetingService;
 import de.lray.service.JaxrsActivator;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
@@ -37,9 +38,9 @@ public class GreetingResourceTest {
         return ShrinkWrap.create(WebArchive.class)
                 .addClass(GreetingMessage.class)
                 .addClass(GreetingService.class)
-                .addClasses(GreetingResource.class, JaxrsActivator.class)
+                .addClasses(GreetingApi.class, GreetingResource.class, JaxrsActivator.class);
                 // Enable CDI (Optional since Java EE 7.0)
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+                //.addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
     
     @ArquillianResource
@@ -51,7 +52,6 @@ public class GreetingResourceTest {
     public void setup() {
         LOGGER.info("call BeforeEach");
         this.client = ClientBuilder.newClient();
-        //removed the Jackson json provider registry, due to OpenLiberty 21.0.0.1 switched to use Resteasy.
     }
     
     @AfterEach

@@ -1,6 +1,5 @@
-package de.lray.service.user.example;
+package de.lray.service.example;
 
-import de.lray.service.user.GreetingService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

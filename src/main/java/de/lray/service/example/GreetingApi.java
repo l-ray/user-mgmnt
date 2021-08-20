@@ -1,4 +1,4 @@
-package de.lray.service.user;
+package de.lray.service.example;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
@@ -20,6 +20,7 @@ import jakarta.ws.rs.core.Response;
         type = SecuritySchemeType.HTTP,
         scheme = "basic"
 )
+@Path("greeting")
 public interface GreetingApi {
 
     @GET
@@ -41,5 +42,5 @@ public interface GreetingApi {
             }
             )
     })
-    Response greeting(@PathParam("name") String name);
+    GreetingMessage greeting(@PathParam("name") String name);
 }

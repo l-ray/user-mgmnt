@@ -1,7 +1,7 @@
-package de.lray.service.user.example.it;
+package de.lray.service.example.it;
 
-import de.lray.service.user.GreetingMessage;
-import de.lray.service.user.GreetingService;
+import de.lray.service.example.GreetingMessage;
+import de.lray.service.example.GreetingService;
 import jakarta.inject.Inject;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit5.ArquillianExtension;

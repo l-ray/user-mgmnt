@@ -1,4 +1,4 @@
-package de.lray.service.user;
+package de.lray.service.example;
 
 import java.io.Serializable;
 

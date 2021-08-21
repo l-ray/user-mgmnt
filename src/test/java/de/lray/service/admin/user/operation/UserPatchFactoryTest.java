@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class UserPatchFactoryTest {
 
     @Test
-    public void test() {
+    void test() {
         assertTrue(true);
     }
 }

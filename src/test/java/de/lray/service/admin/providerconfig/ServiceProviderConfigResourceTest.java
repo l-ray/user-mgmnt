@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 class ServiceProviderConfigResourceTest {
 
   @Test
-  public void whenCalled_thenReturned() {
+  void whenCalled_thenReturned() {
 
     // When
     ServiceProviderConfig response = null;

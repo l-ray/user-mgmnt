@@ -5,29 +5,28 @@ import org.junit.jupiter.api.Test;
 import java.time.Instant;
 import java.util.Date;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class UserSearchCriteriaTest {
 
     @Test
-    public void emptyObjectsEqual() {
+    void emptyObjectsEqual() {
         var first = new UserSearchCriteria();
         var scnd = new UserSearchCriteria();
-        assertTrue(first.equals(scnd));
+        assertEquals(first,scnd);
     }
 
     @Test
-    public void similarObjectsEqual() {
-        assertTrue(create().equals(create()));
+    void similarObjectsEqual() {
+        assertEquals(create(), create());
     }
 
     @Test
-    public void differingObjectsFail() {
+    void differingObjectsFail() {
         var first = create();
         var scnd = create();
         scnd.userName = "other";
-        assertFalse(first.equals(scnd));
+        assertNotEquals(first, scnd);
     }
 
     private UserSearchCriteria create() {
@@ -38,5 +37,4 @@ class UserSearchCriteriaTest {
         item.lastModifiedAfter = Date.from(Instant.ofEpochSecond(0));
         return item;
     }
-
 }

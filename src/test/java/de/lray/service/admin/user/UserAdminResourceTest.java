@@ -3,33 +3,28 @@ package de.lray.service.admin.user;
 
 import de.lray.service.admin.common.Meta;
 import de.lray.service.admin.user.dto.*;
+import jakarta.ws.rs.core.MultivaluedHashMap;
 import jakarta.ws.rs.core.UriInfo;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.description.TextDescription;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Mockito;
-
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.mock;
-
-import jakarta.ws.rs.core.MultivaluedHashMap;
 
 import java.text.ParseException;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static org.mockito.Mockito.*;
+
 class UserAdminResourceTest {
 
 
     @ParameterizedTest
     @CsvSource(value = {"|1|1", "|2|1"}, delimiter = '|')
-    public void returnsUsers(String filter, Integer startIndex, Integer count) throws ParseException {
+    void returnsUsers(String filter, Integer startIndex, Integer count) throws ParseException {
         // Given
         UriInfo uriInfo = mock(UriInfo.class);
         Map<String, String> tempMap = new HashMap<String, String>();
@@ -70,7 +65,7 @@ class UserAdminResourceTest {
 
 
     @Test
-    public void returnsUsersNoParam() throws ParseException {
+    void returnsUsersNoParam() throws ParseException {
         var uriInfo = mock(UriInfo.class);
         when(uriInfo.getQueryParameters()).thenReturn(new MultivaluedHashMap<String, String>(Map.of()));
 
@@ -91,7 +86,7 @@ class UserAdminResourceTest {
     }
 
     @Test
-    public void whenUsernameFilterGiven_returnResult() throws ParseException {
+    void whenUsernameFilterGiven_returnResult() throws ParseException {
         // Given
         var uriInfo = mock(UriInfo.class);
         when(uriInfo.getQueryParameters()).thenReturn(new MultivaluedHashMap<String, String>(
@@ -123,7 +118,7 @@ class UserAdminResourceTest {
 
 
     @Test
-    public void whenLastModifiedFilterGiven_returnResult() throws ParseException {
+    void whenLastModifiedFilterGiven_returnResult() throws ParseException {
         // Given
         var uriInfo = mock(UriInfo.class);
         when(uriInfo.getQueryParameters()).thenReturn(new MultivaluedHashMap<String, String>(
@@ -152,7 +147,7 @@ class UserAdminResourceTest {
 
 
     @Test
-    public void returnsSpecificUser() {
+    void returnsSpecificUser() {
         // Given
         UserRepository repo = mock(UserRepository.class);
         UserResource expected = new UserResource();
@@ -171,88 +166,90 @@ class UserAdminResourceTest {
     }
 
     @Test
-    public void failIfUserDoesNotExist() {
+    void failIfUserDoesNotExist() {
         // Given
         var repo = mock(UserRepository.class);
         when(repo.getUser(any())).thenThrow(UserUnknownException.class);
+        var underTest = new UserAdminResource(repo);
         // When / Then
-        Assertions.assertThatThrownBy(() -> new UserAdminResource(repo).getUser("unknown"))
+        Assertions.assertThatThrownBy(() -> underTest.getUser("unknown"))
                 .isInstanceOf(UserUnknownException.class);
     }
 
     @Test
-    public void whenAddedUserExists_thenReturnConflict() {
+    void whenAddedUserExists_thenReturnConflict() {
         // Given
         var repo = mock(UserRepository.class);
         when(repo.addUser(any())).thenThrow(new UserAlreadyExistsException(""));
+        var underTest = new UserAdminResource(repo);
         // When / Then
-        Assertions.assertThatThrownBy(() -> new UserAdminResource(repo).addUser(mock(UserAdd.class)))
+        Assertions.assertThatThrownBy(() -> underTest.addUser(mock(UserAdd.class)))
                 .isInstanceOf(UserAlreadyExistsException.class);
     }
-    
-  @Test
-  public void whenAddedUserNew_thenReturn() {
-    // Given
-    var repo = mock(UserRepository.class);
-    when(repo.addUser(any())).thenReturn(new UserResource());
-    // When
-    var result = new UserAdminResource(repo).addUser(mock(UserAdd.class));
-    // Then
-    Assertions.assertThat(result).isInstanceOf(UserResource.class);
-  }
 
-  @Test
-  public void updateUser() {
-    // Given
-    var userId = "d0dd58e43ded4293a61a8760fcba0458";
-    var responseUser = new UserResource(); 
-    responseUser.id = userId;
-    
-    var repo = mock(UserRepository.class);
-    when(repo.updateUser(any(), any())).thenReturn(responseUser);
+    @Test
+    void whenAddedUserNew_thenReturn() {
+        // Given
+        var repo = mock(UserRepository.class);
+        when(repo.addUser(any())).thenReturn(new UserResource());
+        // When
+        var result = new UserAdminResource(repo).addUser(mock(UserAdd.class));
+        // Then
+        Assertions.assertThat(result).isInstanceOf(UserResource.class);
+    }
 
-    // When
-    var result = new UserAdminResource(repo).updateUser(userId, mock(UserAdd.class));
-    // Then
-    Assertions.assertThat(result).isInstanceOf(UserResource.class);
-    Assertions.assertThat(result)
-        .hasFieldOrPropertyWithValue("id", userId);
-  }
+    @Test
+    void updateUser() {
+        // Given
+        var userId = "d0dd58e43ded4293a61a8760fcba0458";
+        var responseUser = new UserResource();
+        responseUser.id = userId;
 
+        var repo = mock(UserRepository.class);
+        when(repo.updateUser(any(), any())).thenReturn(responseUser);
 
-  @Test
-  public void whenUpdateUserNotFound_thenRespond() {
-    // Given
-    var userId = "d0dd58e43ded4293a61a8760fcba0458";
-    var repo = mock(UserRepository.class);
-    when(repo.updateUser(any(), any())).thenThrow(new UserUnknownException(""));
-
-    // When / Then
-      Assertions.assertThatThrownBy(() -> new UserAdminResource(repo).updateUser(userId,mock(UserAdd.class)))
-              .isInstanceOf(UserUnknownException.class);
-  }
+        // When
+        var result = new UserAdminResource(repo).updateUser(userId, mock(UserAdd.class));
+        // Then
+        Assertions.assertThat(result).isInstanceOf(UserResource.class);
+        Assertions.assertThat(result)
+                .hasFieldOrPropertyWithValue("id", userId);
+    }
 
 
-  @Test
-  public void whenPatchUserToActive_thenReturn() {
-    // Given
-    var repo = mock(UserRepository.class);
-    when(repo.patchUser(any(),any())).thenReturn(new UserResource());
-    // When
-    var result = new UserAdminResource(repo).patchUser("12345", mock(UserPatch.class));
-    // Then
-    Assertions.assertThat(result).isInstanceOf(UserResource.class);
-  }
+    @Test
+    void whenUpdateUserNotFound_thenRespond() {
+        // Given
+        var userId = "d0dd58e43ded4293a61a8760fcba0458";
+        var repo = mock(UserRepository.class);
+        when(repo.updateUser(any(), any())).thenThrow(new UserUnknownException(""));
+        var underTest = new UserAdminResource(repo);
+        // When / Then
+        Assertions.assertThatThrownBy(() -> underTest.updateUser(userId, mock(UserAdd.class)))
+                .isInstanceOf(UserUnknownException.class);
+    }
 
-  @Test
-  public void whenPatchUserNotFound_thenRespond() {
-    // Given
-    var userId = "d0dd58e43ded4293a61a8760fcba0458";
-    var repo = mock(UserRepository.class);
-    when(repo.patchUser(any(), any())).thenThrow(new UserUnknownException(""));
 
-    // When / Then
-      Assertions.assertThatThrownBy(() -> new UserAdminResource(repo).patchUser(userId, mock(UserPatch.class)))
-              .isInstanceOf(UserUnknownException.class);
-  }
+    @Test
+    void whenPatchUserToActive_thenReturn() {
+        // Given
+        var repo = mock(UserRepository.class);
+        when(repo.patchUser(any(), any())).thenReturn(new UserResource());
+        // When
+        var result = new UserAdminResource(repo).patchUser("12345", mock(UserPatch.class));
+        // Then
+        Assertions.assertThat(result).isInstanceOf(UserResource.class);
+    }
+
+    @Test
+    void whenPatchUserNotFound_thenRespond() {
+        // Given
+        var userId = "d0dd58e43ded4293a61a8760fcba0458";
+        var repo = mock(UserRepository.class);
+        when(repo.patchUser(any(), any())).thenThrow(new UserUnknownException(""));
+        var underTest = new UserAdminResource(repo);
+        // When / Then
+        Assertions.assertThatThrownBy(() -> underTest.patchUser(userId, mock(UserPatch.class)))
+                .isInstanceOf(UserUnknownException.class);
+    }
 }

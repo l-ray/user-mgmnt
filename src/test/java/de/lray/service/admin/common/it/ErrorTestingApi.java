@@ -3,15 +3,16 @@ package de.lray.service.admin.common.it;
 import de.lray.service.admin.user.UserAlreadyExistsException;
 import de.lray.service.admin.user.UserUnknownException;
 import de.lray.service.admin.user.dto.UserName;
+import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.UnexpectedTypeException;
 import jakarta.validation.Valid;
+import jakarta.validation.metadata.ConstraintDescriptor;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
-import org.assertj.core.api.Assertions;
-import org.slf4j.LoggerFactory;
+import org.mockito.Mockito;
 
-import java.util.Collections;
-import java.util.Objects;
+import java.util.*;
 
 @Path("errorTest")
 public class ErrorTestingApi {
@@ -34,7 +35,14 @@ public class ErrorTestingApi {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/validationError")
     public TestMessage testValidationException() {
-        throw new ConstraintViolationException(Collections.EMPTY_SET);
+        throw new UnexpectedTypeException();
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/violationError")
+    public TestMessage testConstraintValidationException() {
+        throw new ConstraintViolationException(Collections.emptySet());
     }
 
     @GET
@@ -52,4 +60,5 @@ public class ErrorTestingApi {
         Objects.requireNonNull(parameter.familyName);
         return new TestMessage("pong");
     }
+
 }

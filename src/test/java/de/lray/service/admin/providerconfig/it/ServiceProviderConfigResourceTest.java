@@ -44,13 +44,13 @@ public class ServiceProviderConfigResourceTest {
     private Client client;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         LOGGER.info("call BeforeEach");
         this.client = ClientBuilder.newClient();
     }
 
     @AfterEach
-    public void teardown() {
+    void teardown() {
         LOGGER.info("call AfterEach");
         if (this.client != null) {
             this.client.close();
@@ -59,7 +59,7 @@ public class ServiceProviderConfigResourceTest {
 
     @Test
     @DisplayName("Service provider config should return results.")
-    public void should_return_service_provider_config() throws MalformedURLException {
+    void should_return_service_provider_config() throws MalformedURLException {
         LOGGER.info(" client: "+client+", baseURL: "+base);
         final var userTarget = this.client.target(new URL(this.base, "api/scim/v2/ServiceProviderConfig").toExternalForm());
         try (final Response response = userTarget.request()

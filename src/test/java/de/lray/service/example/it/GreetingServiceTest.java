@@ -35,7 +35,7 @@ public class GreetingServiceTest {
 
     @Test
     @DisplayName("testing buildGreetingMessage")
-    public void should_create_greeting() {
+    void should_create_greeting() {
         LOGGER.log(Level.INFO, " Running test:: GreetingServiceTest#should_create_greeting ... ");
         var message = service.buildGreetingMessage("Jakarta EE");
         assertTrue(message.getMessage().startsWith("Say Hello to Jakarta EE at "),

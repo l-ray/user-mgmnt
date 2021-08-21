@@ -8,6 +8,7 @@ import de.lray.service.admin.user.dto.UserName;
 import de.lray.service.admin.user.endpoint.ConstraintViolationExceptionMapper;
 import de.lray.service.admin.user.endpoint.UserAlreadyExistsExceptionMapper;
 import de.lray.service.admin.user.endpoint.UserUnknownExceptionMapper;
+import de.lray.service.admin.user.endpoint.ValidationExceptionMapper;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.core.MediaType;
@@ -44,7 +45,8 @@ public class ExceptionMapperTest {
         return ShrinkWrap.create(WebArchive.class)
                 .addClasses(UserName.class, TestMessage.class)
                 .addClasses(UserAlreadyExistsException.class, UserUnknownException.class)
-                .addClasses(UserAlreadyExistsExceptionMapper.class, UserUnknownExceptionMapper.class, Error.class, ConstraintViolationExceptionMapper.class)
+                .addClasses(UserAlreadyExistsExceptionMapper.class, UserUnknownExceptionMapper.class, Error.class,
+                        ConstraintViolationExceptionMapper.class, ValidationExceptionMapper.class)
                 .addClasses(ErrorTestingApi.class, JaxrsActivator.class);
     }
 
@@ -54,13 +56,13 @@ public class ExceptionMapperTest {
     private Client client;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         LOGGER.info("call BeforeEach");
         this.client = ClientBuilder.newClient();
     }
 
     @AfterEach
-    public void teardown() {
+    void teardown() {
         LOGGER.info("call AfterEach");
         if (this.client != null) {
             this.client.close();
@@ -69,7 +71,7 @@ public class ExceptionMapperTest {
 
     @Test
     @DisplayName("Simple call should return result.")
-    public void should_return_result() throws MalformedURLException {
+    void should_return_result() throws MalformedURLException {
         LOGGER.info(" client: " + client + ", baseURL: " + base);
         final var target = this.client.target(new URL(this.base, "api/errorTest/ping").toExternalForm());
         try (final Response response = target.request()
@@ -82,7 +84,7 @@ public class ExceptionMapperTest {
 
     @Test
     @DisplayName("Simple post should return result.")
-    public void post_should_return_result() throws MalformedURLException {
+    void post_should_return_result() throws MalformedURLException {
         LOGGER.info(" client: " + client + ", baseURL: " + base);
         final var target = this.client.target(new URL(this.base, "api/errorTest/ping").toExternalForm());
         var payload = new UserName();
@@ -98,7 +100,7 @@ public class ExceptionMapperTest {
 
     @Test
     @DisplayName("Should return Unknown User Error.")
-    public void should_return_not_found_error() throws MalformedURLException {
+    void should_return_not_found_error() throws MalformedURLException {
         LOGGER.info(" client: " + client + ", baseURL: " + base);
         final var userTarget = this.client.target(new URL(this.base, "api/errorTest/unknownUser").toExternalForm());
         try (final Response response = userTarget.request()
@@ -115,7 +117,7 @@ public class ExceptionMapperTest {
 
     @Test
     @DisplayName("Should return already exist User Error.")
-    public void should_return_already_exist_error() throws MalformedURLException {
+    void should_return_already_exist_error() throws MalformedURLException {
         LOGGER.info(" client: " + client + ", baseURL: " + base);
         final var userTarget = this.client.target(new URL(this.base, "api/errorTest/alreadyExist").toExternalForm());
         try (final Response response = userTarget.request()
@@ -131,8 +133,25 @@ public class ExceptionMapperTest {
     }
 
     @Test
+    @DisplayName("Should return violation Error.")
+    void should_return_violation_error() throws MalformedURLException {
+        LOGGER.info(" client: " + client + ", baseURL: " + base);
+        final var userTarget = this.client.target(new URL(this.base, "api/errorTest/violationError").toExternalForm());
+        try (final Response response = userTarget.request()
+                .accept(MediaType.APPLICATION_JSON_TYPE)
+                .get()) {
+
+            var responseEntity = response.readEntity(Error.class);
+            assertThat(responseEntity.detail).contains("");
+            assertThat(responseEntity.status).isEqualTo(400);
+            assertThat(responseEntity.schemas).hasSize(1).first().asString().contains("scim");
+            assertThat(response.getStatus()).isEqualTo(400);
+        }
+    }
+
+    @Test
     @DisplayName("Should return validation Error.")
-    public void should_return_validation_error() throws MalformedURLException {
+    void should_return_validation_error() throws MalformedURLException {
         LOGGER.info(" client: " + client + ", baseURL: " + base);
         final var userTarget = this.client.target(new URL(this.base, "api/errorTest/validationError").toExternalForm());
         try (final Response response = userTarget.request()

@@ -49,13 +49,13 @@ public class GreetingResourceTest {
     private Client client;
     
     @BeforeEach
-    public void setup() {
+    void setup() {
         LOGGER.info("call BeforeEach");
         this.client = ClientBuilder.newClient();
     }
     
     @AfterEach
-    public void teardown() {
+    void teardown() {
         LOGGER.info("call AfterEach");
         if (this.client != null) {
             this.client.close();
@@ -64,7 +64,7 @@ public class GreetingResourceTest {
     
     @Test
     @DisplayName("Given a name:`JakartaEE` should return `Say Hello to JakartaEE`")
-    public void should_create_greeting() throws MalformedURLException {
+    void should_create_greeting() throws MalformedURLException {
         LOGGER.log(Level.INFO, " client: {0}, baseURL: {1}", new Object[]{client, base});
         final var greetingTarget = this.client.target(new URL(this.base, "api/greeting/JakartaEE").toExternalForm());
         try (final Response greetingGetResponse = greetingTarget.request()

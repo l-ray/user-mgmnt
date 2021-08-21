@@ -10,12 +10,12 @@ public class GreetingServiceUnitTest {
     GreetingService service;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         service = new GreetingService();
     }
 
     @Test
-    public void testGreeting(){
+    void testGreeting(){
        var message = service.buildGreetingMessage("JakartaEE");
        assertThat(message.getMessage()).startsWith("Say Hello to JakartaEE");
     }

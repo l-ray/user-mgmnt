@@ -55,13 +55,13 @@ public class UserAdminResourceTest {
     private Client client;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         LOGGER.info("call BeforeEach");
         this.client = ClientBuilder.newClient();
     }
 
     @AfterEach
-    public void teardown() {
+    void teardown() {
         LOGGER.info("call AfterEach");
         if (this.client != null) {
             this.client.close();
@@ -70,7 +70,7 @@ public class UserAdminResourceTest {
 
     @Test
     @DisplayName("User list should return no results.")
-    public void should_return_empty_user_list() throws MalformedURLException {
+    void should_return_empty_user_list() throws MalformedURLException {
         LOGGER.info(" client: "+client+", baseURL: "+base);
         final var userTarget = this.client.target(new URL(this.base, "api/scim/v2/Users").toExternalForm());
         try (final Response response = userTarget.request()
@@ -83,7 +83,7 @@ public class UserAdminResourceTest {
 
     @Test
     @DisplayName("Single user should return result.")
-    public void should_return_single_user() throws MalformedURLException {
+    void should_return_single_user() throws MalformedURLException {
         LOGGER.info(" client: "+client+", baseURL: "+base);
         final var userTarget = this.client.target(new URL(this.base, "api/scim/v2/Users/123").toExternalForm());
         try (final Response response = userTarget.request()
@@ -96,7 +96,7 @@ public class UserAdminResourceTest {
 
     @Test
     @DisplayName("Adding user should return error.")
-    public void should_return_not_found_error_on_user_add() throws MalformedURLException {
+    void should_return_not_found_error_on_user_add() throws MalformedURLException {
         LOGGER.info(" client: "+client+", baseURL: "+base);
         final var userTarget = this.client.target(new URL(this.base, "api/scim/v2/Users").toExternalForm());
 
@@ -117,7 +117,7 @@ public class UserAdminResourceTest {
 
     @Test
     @DisplayName("Updating user should return object.")
-    public void should_return_object_on_update() throws MalformedURLException {
+    void should_return_object_on_update() throws MalformedURLException {
         LOGGER.info(" client: "+client+", baseURL: "+base);
         final var userTarget = this.client.target(new URL(this.base, "api/scim/v2/Users/3").toExternalForm());
         try (final Response response = userTarget.request()
@@ -131,7 +131,7 @@ public class UserAdminResourceTest {
 
     @Test
     @DisplayName("Patching user should return object.")
-    public void should_return_error_on_patch() throws MalformedURLException {
+    void should_return_error_on_patch() throws MalformedURLException {
         LOGGER.info(" client: "+client+", baseURL: "+base);
         final var userTarget = this.client.target(new URL(this.base, "api/scim/v2/Users/3").toExternalForm());
         //final var requestObject = ScimTestMessageFactory.createUserPatch();

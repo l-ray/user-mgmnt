@@ -1,20 +1,19 @@
 package de.lray.service.admin.user.endpoint;
 
+import de.lray.service.admin.common.Error;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import jakarta.validation.ValidationException;
 import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
-import de.lray.service.admin.common.Error;
 
 @Provider
 public class ConstraintViolationExceptionMapper
-        implements ExceptionMapper<ValidationException> {
+        implements ExceptionMapper<ConstraintViolationException> {
 
     @Override
-    public Response toResponse(final ValidationException exception) {
+    public Response toResponse(final ConstraintViolationException exception) {
         return Response.status(Response.Status.BAD_REQUEST)
                 .type(MediaType.APPLICATION_JSON)
                 .entity(Error.invalidArgument(prepareMessage(exception)))
@@ -22,16 +21,14 @@ public class ConstraintViolationExceptionMapper
     }
 
     private String prepareMessage(ConstraintViolationException exception) {
-        String msg = "";
+        StringBuilder msg = new StringBuilder();
         for (ConstraintViolation<?> cv : exception.getConstraintViolations()) {
-            msg+=cv.getPropertyPath()+" "+cv.getMessage()+"\n";
+            msg.append(
+                    cv.getPropertyPath())
+                    .append(" ")
+                    .append(cv.getMessage())
+                    .append("\n");
         }
-        return msg;
+        return msg.toString();
     }
-
-    private String prepareMessage(ValidationException exception) {
-        return exception.getMessage();
-    }
-
-
 }

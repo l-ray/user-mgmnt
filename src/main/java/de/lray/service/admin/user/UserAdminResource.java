@@ -59,7 +59,7 @@ public class UserAdminResource implements UserAdminApi {
         Integer count = countString != null
                 ? Integer.valueOf(countString) : null;
 
-        LOGGER.info("GetUsers filter ${filter} start index ${startIndex} count ${count}");
+        LOGGER.info("GetUsers filter {} start index {} count {}",filter, startIndex, count);
 
         UserSearchCriteria searchCriteria = new UserSearchCriteria();
         searchCriteria.startIndex = startIndex == null ? 1 : startIndex;
@@ -86,21 +86,21 @@ public class UserAdminResource implements UserAdminApi {
 
     @Override
     public UserResource getUser(String userId) {
-        LOGGER.info("get user by userId ${userId}");
+        LOGGER.info("get user by userId {}", userId);
         UserResource response = repository.getUser(userId);
         return response;
     }
 
     @Override
     public UserResource addUser(UserAdd payload) {
-        LOGGER.info("Post new user" + payload);
+        LOGGER.info("Post new user {}", payload);
         UserResource response = repository.addUser(payload);
         return response;
     }
 
     @Override
     public UserResource updateUser(String userId, UserAdd payload) {
-        LOGGER.info("put user by userId ${userId}: ${payload}");
+        LOGGER.info("Put user by userId {}: {}", userId, payload);
         UserResource response = repository.updateUser(userId, payload);
         return response;
     }
@@ -108,7 +108,7 @@ public class UserAdminResource implements UserAdminApi {
     @Override
     @PATCH
     public UserResource patchUser(String userId, UserPatch payload) {
-        LOGGER.info("patch user by userId ${userId}:${payload}");
+        LOGGER.info("patch user by userId {}:{}", userId, payload);
 
         UserResource response = repository.patchUser(userId, payload);
         return response;

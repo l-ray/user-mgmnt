@@ -105,7 +105,7 @@ class UserAdminResourceTest {
         var expectedResult = new UserResultItem();
 
         var repo = mock(UserRepository.class);
-        when(repo.getUsers(eq(expectedSearchCriteria))).thenReturn(
+        when(repo.getUsers(expectedSearchCriteria)).thenReturn(
                 Arrays.asList(expectedResult)
         );
 
@@ -136,7 +136,7 @@ class UserAdminResourceTest {
         var expectedResult = new UserResultItem();
 
         var repo = mock(UserRepository.class);
-        when(repo.getUsers(eq(expectedSearchCriteria))).thenReturn(Arrays.asList(expectedResult));
+        when(repo.getUsers(expectedSearchCriteria)).thenReturn(Arrays.asList(expectedResult));
 
         // When
         var result = new UserAdminResource(repo).getUsers(uriInfo);

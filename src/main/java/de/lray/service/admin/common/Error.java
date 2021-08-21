@@ -10,7 +10,7 @@ import java.util.Objects;
 public class Error {
 
   public static final List<String> schemas
-          = Arrays.asList("urn:ietf:params:scim:api:messages:2.0:Error");
+          = List.of("urn:ietf:params:scim:api:messages:2.0:Error");
   public int status = HttpStatus.SC_NOT_FOUND;
   public String detail = "Not Found";
 

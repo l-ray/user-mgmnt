@@ -550,7 +550,7 @@
                         <configuration>
                             <excludes>
                                 <!-- excludes the resources not to calculated in coverage report-->
-                                <exclude>**/*Resource.*</exclude>
+                                <!-- exclude>**/*Resource.*</exclude -->
                             </excludes>
                         </configuration>
                         <executions>

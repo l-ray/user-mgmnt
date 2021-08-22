@@ -9,6 +9,7 @@ import de.lray.service.admin.user.dto.*;
 import de.lray.service.admin.user.endpoint.*;
 import de.lray.service.JaxrsActivator;
 import de.lray.service.admin.user.operation.UserPatchOpField;
+import de.lray.service.admin.user.persistence.UserRepository;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;

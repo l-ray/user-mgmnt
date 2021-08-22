@@ -4,10 +4,10 @@ import java.util.Date;
 import java.util.Objects;
 
 public class UserSearchCriteria {
-  String userName = null;
-  Integer startIndex = 0;
-  Integer count = Integer.MAX_VALUE;
-  Date lastModifiedAfter = null;
+  public String userName = null;
+  public Integer startIndex = 1;
+  public Integer count = Integer.MAX_VALUE;
+  public Date lastModifiedAfter = null;
 
   @Override
   public boolean equals(Object o) {

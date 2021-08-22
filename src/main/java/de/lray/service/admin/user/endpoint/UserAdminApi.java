@@ -44,7 +44,7 @@ public interface UserAdminApi {
     })
     @GET
     @Produces(ServiceProviderConfigResource.SCIM_MEDIA_TYPE)
-    UserResult getUsers(@Context UriInfo info) throws ParseException;
+    UserResult getUsers(@QueryParam("filter") String filter, @QueryParam("startIndex") Integer startIndex, @QueryParam("count") Integer count) throws ParseException;
 
     @Operation(summary = "Select single user",
             description = "Returns user with given id, http error elsewise.")

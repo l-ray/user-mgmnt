@@ -3,6 +3,7 @@ package de.lray.service.admin.user;
 
 import de.lray.service.admin.common.Meta;
 import de.lray.service.admin.user.dto.*;
+import de.lray.service.admin.user.persistence.UserRepository;
 import jakarta.ws.rs.core.MultivaluedHashMap;
 import jakarta.ws.rs.core.UriInfo;
 import org.assertj.core.api.Assertions;
@@ -26,14 +27,6 @@ class UserAdminResourceTest {
     @CsvSource(value = {"|1|1", "|2|1"}, delimiter = '|')
     void returnsUsers(String filter, Integer startIndex, Integer count) throws ParseException {
         // Given
-        UriInfo uriInfo = mock(UriInfo.class);
-        Map<String, String> tempMap = new HashMap<String, String>();
-        if (filter != null) tempMap.put("filter", filter);
-        if (startIndex != null) tempMap.put("startIndex", startIndex.toString());
-        if (count != null) tempMap.put("count", count.toString());
-        MultivaluedHashMap<String, String> response = new MultivaluedHashMap<String, String>(tempMap);
-        when(uriInfo.getQueryParameters()).thenReturn(response);
-
         UserRepository repo = Mockito.mock(UserRepository.class);
 
         List<UserResultItem> items = IntStream.range(0, count)
@@ -48,7 +41,7 @@ class UserAdminResourceTest {
         when(repo.getUsers(Mockito.any())).thenReturn(items);
 
         // When
-        UserResult result = new UserAdminResource(repo).getUsers(uriInfo);
+        UserResult result = new UserAdminResource(repo).getUsers(filter, startIndex, count);
 
         // Then
         Assertions.assertThat(result.schemas)
@@ -66,14 +59,11 @@ class UserAdminResourceTest {
 
     @Test
     void returnsUsersNoParam() throws ParseException {
-        var uriInfo = mock(UriInfo.class);
-        when(uriInfo.getQueryParameters()).thenReturn(new MultivaluedHashMap<String, String>(Map.of()));
-
         var repo = mock(UserRepository.class);
         when(repo.getUsers(Mockito.any())).thenReturn(Arrays.asList(new UserResultItem()));
 
         // When
-        var result = new UserAdminResource(repo).getUsers(uriInfo);
+        var result = new UserAdminResource(repo).getUsers(null, null, null);
 
         // Then
         Assertions.assertThat((result).itemsPerPage)
@@ -88,14 +78,6 @@ class UserAdminResourceTest {
     @Test
     void whenUsernameFilterGiven_returnResult() throws ParseException {
         // Given
-        var uriInfo = mock(UriInfo.class);
-        when(uriInfo.getQueryParameters()).thenReturn(new MultivaluedHashMap<String, String>(
-                Map.of(
-                        "filter", "userName eq \"myemail@example.com\"",
-                        "startIndex", "0",
-                        "count", "1")
-        ));
-
         var expectedSearchCriteria = new UserSearchCriteria();
         expectedSearchCriteria.userName = "myemail@example.com";
         expectedSearchCriteria.startIndex = 0;
@@ -110,7 +92,7 @@ class UserAdminResourceTest {
         );
 
         // When
-        var result = new UserAdminResource(repo).getUsers(uriInfo);
+        var result = new UserAdminResource(repo).getUsers("userName eq \"myemail@example.com\"",0,1);
 
         // Then
         Assertions.assertThat(result.Resources).containsOnly(expectedResult);
@@ -120,13 +102,6 @@ class UserAdminResourceTest {
     @Test
     void whenLastModifiedFilterGiven_returnResult() throws ParseException {
         // Given
-        var uriInfo = mock(UriInfo.class);
-        when(uriInfo.getQueryParameters()).thenReturn(new MultivaluedHashMap<String, String>(
-                Map.of("filter", "meta.lastModified gt \"2020-04-07T14:19:34Z\"",
-                        "startIndex", "0",
-                        "count", "1")
-        ));
-
         var expectedSearchCriteria = new UserSearchCriteria();
         expectedSearchCriteria.userName = null;
         expectedSearchCriteria.startIndex = 0;
@@ -139,7 +114,7 @@ class UserAdminResourceTest {
         when(repo.getUsers(expectedSearchCriteria)).thenReturn(Arrays.asList(expectedResult));
 
         // When
-        var result = new UserAdminResource(repo).getUsers(uriInfo);
+        var result = new UserAdminResource(repo).getUsers("meta.lastModified gt \"2020-04-07T14:19:34Z\"",0,1);
 
         // Then
         Assertions.assertThat(result.Resources).containsOnly(expectedResult);

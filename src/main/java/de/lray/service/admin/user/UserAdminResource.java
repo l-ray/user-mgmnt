@@ -2,6 +2,7 @@ package de.lray.service.admin.user;
 
 import de.lray.service.admin.user.dto.*;
 import de.lray.service.admin.user.endpoint.UserAdminApi;
+import de.lray.service.admin.user.persistence.UserRepository;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.PATCH;
@@ -45,20 +46,9 @@ public class UserAdminResource implements UserAdminApi {
     }
 
     @Override
-    public UserResult getUsers(UriInfo info) throws ParseException {
+    public UserResult getUsers(String filter, Integer startIndex, Integer count) throws ParseException {
         // e.g. filter=meta.lastModified gt “2020-04-07T14:19:34Z”
         // e.g. filter=userName%20eq%20%22myemail%40example.com%22
-        MultivaluedMap<String, String> queryParameters = info.getQueryParameters();
-        String filter = queryParameters.getFirst("filter");
-
-        String startIndexString = queryParameters.getFirst("startIndex");
-        Integer startIndex = startIndexString != null
-                ? Integer.valueOf(startIndexString) : null;
-
-        String countString = queryParameters.getFirst("count");
-        Integer count = countString != null
-                ? Integer.valueOf(countString) : null;
-
         LOGGER.info("GetUsers filter {} start index {} count {}",filter, startIndex, count);
 
         UserSearchCriteria searchCriteria = new UserSearchCriteria();

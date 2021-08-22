@@ -1,5 +1,6 @@
-package de.lray.service.admin.user;
+package de.lray.service.admin.user.persistence;
 
+import de.lray.service.admin.user.UserSearchCriteria;
 import de.lray.service.admin.user.dto.UserAdd;
 import de.lray.service.admin.user.dto.UserPatch;
 import de.lray.service.admin.user.dto.UserResource;

@@ -4,6 +4,7 @@ import de.lray.service.admin.common.Meta;
 import jakarta.validation.constraints.NotEmpty;
 
 import java.util.List;
+import java.util.Objects;
 
 @SuppressWarnings("java:S1104")
 public class UserResultItem {
@@ -28,5 +29,25 @@ public class UserResultItem {
     public UserResultItem() {
         meta = new Meta();
         meta.resourceType = Meta.ResourceTypeEnum.User;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UserResultItem that = (UserResultItem) o;
+        return active == that.active
+                && Objects.equals(id, that.id)
+                && Objects.equals(userName, that.userName)
+                && Objects.equals(name, that.name)
+                && Objects.equals(emails, that.emails)
+                && Objects.equals(phoneNumbers, that.phoneNumbers)
+                && Objects.equals(roles, that.roles)
+                && Objects.equals(meta, that.meta);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, userName);
     }
 }

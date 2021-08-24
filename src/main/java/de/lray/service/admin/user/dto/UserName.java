@@ -11,12 +11,21 @@ public class UserName {
   @NotEmpty
   public String familyName;
 
+  public UserName() {}
+
+  public UserName(String middleName, String givenName, String familyName) {
+    this.middleName = middleName;
+    this.givenName = givenName;
+    this.familyName = familyName;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     UserName userName = (UserName) o;
-    return Objects.equals(middleName, userName.middleName) && Objects.equals(givenName, userName.givenName) && Objects.equals(familyName, userName.familyName);
+    return Objects.equals(middleName, userName.middleName)
+            && Objects.equals(givenName, userName.givenName) && Objects.equals(familyName, userName.familyName);
   }
 
   @Override

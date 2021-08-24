@@ -23,7 +23,6 @@ public class Contact extends Keyable {
 
     private String phoneNumber;
 
-
     public String getFirstName() {
         return firstName;
     }

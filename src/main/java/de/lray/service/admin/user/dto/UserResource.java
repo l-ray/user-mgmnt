@@ -23,13 +23,12 @@ public class  UserResource extends UserResultItem {
     UserResource that = (UserResource) o;
     return Objects.equals(displayName, that.displayName)
             && Objects.equals(preferredLanguage, that.preferredLanguage)
-            && Objects.equals(locale, that.locale)
-            && Objects.equals(timezone, that.timezone);
+            && Objects.equals(locale, that.locale);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(super.hashCode(), displayName, preferredLanguage, locale, timezone);
+    return Objects.hash(super.hashCode(), displayName, preferredLanguage, locale);
   }
 
   @Override

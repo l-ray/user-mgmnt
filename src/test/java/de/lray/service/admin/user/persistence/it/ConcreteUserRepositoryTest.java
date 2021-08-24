@@ -12,6 +12,7 @@ import de.lray.service.admin.user.persistence.UserRepository;
 import de.lray.service.admin.user.persistence.entities.Contact;
 import de.lray.service.admin.user.persistence.entities.Credentials;
 import de.lray.service.admin.user.persistence.entities.User;
+import de.lray.service.admin.user.persistence.mapper.UserToUserResourceMapper;
 import de.lray.service.admin.user.persistence.mapper.UserToUserResultItemMapper;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
@@ -44,7 +45,7 @@ class ConcreteUserRepositoryTest {
                 .addPackage(Meta.class.getPackage())
                 .addPackage(UserSearchCriteria.class.getPackage())
                 .addPackage(UserPatchFactory.class.getPackage())
-                .addClass(UserToUserResultItemMapper.class)
+                .addClasses(UserToUserResultItemMapper.class, UserToUserResourceMapper.class)
                 .addPackage(ConcreteUserRepository.class.getPackage())
                 .addClass(Resources.class)
                 .addAsResource("test-persistence.xml", "META-INF/persistence.xml")
@@ -102,7 +103,7 @@ class ConcreteUserRepositoryTest {
             em.persist(creds);
             if (aUser.getKey().equals(USER_NAMES.keySet().iterator().next())) {
                 em.refresh(user);
-                existingUserId = user.getId().toString();
+                existingUserId = user.getPublicId();
             }
         }
         utx.commit();
@@ -193,7 +194,6 @@ class ConcreteUserRepositoryTest {
         assertEquals(List.of(),result);
     }
 
-    /*
     @Test
     void whenSearchById_returnsSingleResult() {
         // When
@@ -203,5 +203,4 @@ class ConcreteUserRepositoryTest {
         assertEquals(existingUserId, result.id);
         assertEquals(USER_NAMES.keySet().iterator().next(), result.name.givenName);
     }
-    */
 }

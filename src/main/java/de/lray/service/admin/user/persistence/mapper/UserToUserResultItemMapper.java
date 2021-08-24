@@ -1,6 +1,9 @@
 package de.lray.service.admin.user.persistence.mapper;
 
-import de.lray.service.admin.user.dto.*;
+import de.lray.service.admin.user.dto.UserEmail;
+import de.lray.service.admin.user.dto.UserName;
+import de.lray.service.admin.user.dto.UserPhone;
+import de.lray.service.admin.user.dto.UserResultItem;
 import de.lray.service.admin.user.persistence.entities.Contact;
 import de.lray.service.admin.user.persistence.entities.User;
 
@@ -19,29 +22,19 @@ public abstract class UserToUserResultItemMapper {
 
     public static UserResultItem map(User item) {
         var dateFormatter = new SimpleDateFormat(REST_DATETIME_FORMAT);
-        var result = mapToResultDto(item, new UserResource());
+        var result = mapToResultDto(item, new UserResultItem());
         result.meta.lastModified = dateFormatter.format(item.getUpdateDate());
         result.meta.created = dateFormatter.format(item.getCreationDate());
 
-    /*
-    result.displayName = item.DisplayName
-    result.preferredLanguage = item.UserLanguage?.Code
-    result.locale = item.Locale?.Code
-    result.timezone = item.TimeZone?.DisplayName
-    */
         return result;
     }
 
-    private static UserResultItem mapToResultDto(User item) {
-        return mapToResultDto(item, null);
-    }
-
-    private static UserResultItem mapToResultDto(User item, UserResultItem result) {
+    protected static UserResultItem mapToResultDto(User item, UserResultItem result) {
         Objects.requireNonNull(item.getContact(), "No contact object on user " + item.getId());
         Objects.requireNonNull(item.getCredentials(), "No credential object on user " + item.getId());
 
         result = result == null ? new UserResultItem() : result;
-        result.id = item.getId().toString();
+        result.id = item.getPublicId();
 
         var credentials = item.getCredentials();
 

@@ -29,7 +29,6 @@ public class ConcreteUserRepository implements UserRepository {
 
   static final String FIND_USER_BY_PUBLIC_ID_SQL = "SELECT c FROM User c WHERE c.publicId = :publicId";
 
-
   private final EntityManager entityManager;
 
   private final UserTransaction utx;

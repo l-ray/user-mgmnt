@@ -11,7 +11,7 @@ abstract public class Keyable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id = 0L;
+    private final Long id = 0L;
 
     @Column(unique = true)
     private String publicId = "";

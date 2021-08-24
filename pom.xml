@@ -359,38 +359,6 @@
                     <scope>test</scope>
                 </dependency>
 
-
-                <!--                &lt;!&ndash; Import the CDI API, we use provided scope as the API is included in JBoss EAP &ndash;&gt;-->
-<!--                <dependency>-->
-<!--                    <groupId>jakarta.enterprise</groupId>-->
-<!--                    <artifactId>jakarta.enterprise.cdi-api</artifactId>-->
-<!--                    <scope>provided</scope>-->
-<!--                </dependency>-->
-
-<!--                &lt;!&ndash; Import the JPA API, we use provided scope as the API is included in JBoss EAP &ndash;&gt;-->
-<!--                <dependency>-->
-<!--                    <groupId>jakarta.persistence</groupId>-->
-<!--                    <artifactId>jakarta.persistence-api</artifactId>-->
-<!--                    -->
-<!--                    <scope>provided</scope>-->
-<!--                </dependency>-->
-
-                <!-- Import the Common Annotations API (JSR-250), we use provided scope
-                   as the API is included in JBoss EAP -->
-<!--                <dependency>-->
-<!--                    <groupId>org.jboss.spec.javax.annotation</groupId>-->
-<!--                    <artifactId>jboss-annotations-api_1.3_spec</artifactId>-->
-<!--                    <version>${wildfly.version}</version>-->
-<!--                    <scope>provided</scope>-->
-<!--                </dependency>-->
-
-<!--                &lt;!&ndash; Import the JTA API, we use provided scope as the API is included in JBoss EAP &ndash;&gt;-->
-<!--                <dependency>-->
-<!--                    <groupId>org.jboss.spec.javax.transaction</groupId>-->
-<!--                    <artifactId>jboss-transaction-api_1.3_spec</artifactId>-->
-<!--                    <version>${wildfly.version}</version>-->
-<!--                    <scope>provided</scope>-->
-<!--                </dependency>-->
             </dependencies>
             <build>
                 <testResources>
@@ -485,13 +453,6 @@
                     <version>${wildfly-arquillian.version}</version>
                     <scope>test</scope>
                 </dependency>
-                <dependency>
-                    <groupId>org.hibernate</groupId>
-                    <artifactId>hibernate-core</artifactId>
-                    <version>5.2.10.Final</version>
-                    <scope>test</scope>
-                </dependency>
-
             </dependencies>
 
             <build>

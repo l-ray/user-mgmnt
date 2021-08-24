@@ -17,8 +17,7 @@ public abstract class UserToUserResultItemMapper {
     static final String REST_DATETIME_FORMAT = "dd-MM-yy hh:mm:ss";
     static final String CONTACT_TYPE_WORK_STRING = "work";
 
-    private UserToUserResultItemMapper() {
-    }
+    private UserToUserResultItemMapper() { /* keep it static */ }
 
     public static UserResultItem map(User item) {
         var dateFormatter = new SimpleDateFormat(REST_DATETIME_FORMAT);
@@ -45,7 +44,7 @@ public abstract class UserToUserResultItemMapper {
         result.emails = mapEmails(item.getContact());
         result.phoneNumbers = mapPhones(item.getContact());
 
-        // result.roles = item.Roles.map(\elt -> elt.Role.DisplayName).toList()
+        // result.roles = item.Roles.stream().map((elt) -> elt.Role.DisplayName).toList()
         return result;
     }
 

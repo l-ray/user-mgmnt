@@ -8,10 +8,12 @@ import de.lray.service.admin.user.dto.UserResource;
 import de.lray.service.admin.user.dto.UserResultItem;
 import de.lray.service.admin.user.operation.UserPatchFactory;
 import de.lray.service.admin.user.persistence.entities.User;
+import de.lray.service.admin.user.persistence.mapper.UserToUserResourceMapper;
 import de.lray.service.admin.user.persistence.mapper.UserToUserResultItemMapper;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -25,8 +27,7 @@ import java.util.stream.Collectors;
 @ApplicationScoped
 public class ConcreteUserRepository implements UserRepository {
 
-
-  static final String FIND_USER_BY_PUBLIC_ID_SQL = "SELECT c FROM User c WHERE c.id = :publicId";
+  static final String FIND_USER_BY_PUBLIC_ID_SQL = "SELECT c FROM User c WHERE c.publicId = :publicId";
 
 
   private final EntityManager entityManager;
@@ -74,7 +75,7 @@ public class ConcreteUserRepository implements UserRepository {
 
   @Override
   public UserResource getUser(String id ) {
-    throw new UserUnknownException("To be done");
+    return UserToUserResourceMapper.map(findUserByPublicId(id));
   }
 
   @Override public UserResource addUser(UserAdd payload ) {
@@ -90,7 +91,11 @@ public class ConcreteUserRepository implements UserRepository {
   }
 
   private User findUserByPublicId(String id) {
-    return FIND_USER_BY_PUBLIC_ID_QUERY.setParameter("publicId", id).getSingleResult();
+    try {
+      return FIND_USER_BY_PUBLIC_ID_QUERY.setParameter("publicId", id).getSingleResult();
+    } catch (NoResultException ex) {
+      throw new UserUnknownException("id");
+    }
   }
 
 }

@@ -1,5 +1,6 @@
 package de.lray.service.admin.user.persistence;
 
+import de.lray.service.admin.user.UserAlreadyExistsException;
 import de.lray.service.admin.user.UserSearchCriteria;
 import de.lray.service.admin.user.UserUnknownException;
 import de.lray.service.admin.user.dto.UserAdd;
@@ -7,7 +8,9 @@ import de.lray.service.admin.user.dto.UserPatch;
 import de.lray.service.admin.user.dto.UserResource;
 import de.lray.service.admin.user.dto.UserResultItem;
 import de.lray.service.admin.user.operation.UserPatchFactory;
+import de.lray.service.admin.user.persistence.entities.Credentials;
 import de.lray.service.admin.user.persistence.entities.User;
+import de.lray.service.admin.user.persistence.mapper.UserAddToUserMapper;
 import de.lray.service.admin.user.persistence.mapper.UserToUserResourceMapper;
 import de.lray.service.admin.user.persistence.mapper.UserToUserResultItemMapper;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -28,6 +31,7 @@ import java.util.stream.Collectors;
 public class ConcreteUserRepository implements UserRepository {
 
   static final String FIND_USER_BY_PUBLIC_ID_SQL = "SELECT c FROM User c WHERE c.publicId = :publicId";
+  static final String FIND_CREDENTIAL_BY_USERNAME_SQL = "SELECT c FROM Credentials c WHERE c.username = :username";
 
   private final EntityManager entityManager;
 
@@ -36,6 +40,7 @@ public class ConcreteUserRepository implements UserRepository {
   private final UserPatchFactory patchFactory;
 
   private final TypedQuery<User> queryFindUserByPublicId;
+  private final TypedQuery<Credentials> queryFindCredentialsByUserName;
 
   @Inject
   public ConcreteUserRepository(
@@ -47,7 +52,13 @@ public class ConcreteUserRepository implements UserRepository {
     this.utx = utx;
 
     queryFindUserByPublicId = entityManager.createQuery(
-            FIND_USER_BY_PUBLIC_ID_SQL, User.class);
+            FIND_USER_BY_PUBLIC_ID_SQL, User.class
+    );
+
+    queryFindCredentialsByUserName = entityManager.createQuery(
+            FIND_CREDENTIAL_BY_USERNAME_SQL, Credentials.class
+    );
+
   }
 
   @Override
@@ -77,8 +88,18 @@ public class ConcreteUserRepository implements UserRepository {
     return UserToUserResourceMapper.map(findUserByPublicId(id));
   }
 
+  private UserResource getUserByUserName(String id ) {
+    return UserToUserResourceMapper.map(findUserByUserName(id));
+  }
+
   @Override public UserResource addUser(UserAdd payload ) {
-    throw new UnsupportedOperationException("Not done yet.");
+    try {
+    var newUser = UserAddToUserMapper.map(payload);
+      entityManager.persist(newUser);
+      return getUserByUserName(payload.userName);
+   } catch (jakarta.persistence.PersistenceException ex) {
+      throw new UserAlreadyExistsException(String.format("User %s already exists in system.", payload.userName));
+    }
   }
 
   @Override public UserResource updateUser(String id, UserAdd payload) {
@@ -93,7 +114,17 @@ public class ConcreteUserRepository implements UserRepository {
     try {
       return queryFindUserByPublicId.setParameter("publicId", id).getSingleResult();
     } catch (NoResultException ex) {
-      throw new UserUnknownException("id");
+      throw new UserUnknownException("public id:".concat(id));
+    }
+  }
+
+  private User findUserByUserName(String id) {
+    try {
+      return queryFindCredentialsByUserName
+              .setParameter("username", id).getSingleResult()
+              .getUser();
+    } catch (NoResultException ex) {
+      throw new UserUnknownException("username".concat(id));
     }
   }
 

@@ -19,8 +19,6 @@ public class Credentials extends Keyable {
     @Column(columnDefinition = "boolean default false")
     private boolean locked;
 
-    public Credentials() { }
-
     public String getUsername() {
         return username;
     }

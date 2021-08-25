@@ -124,27 +124,27 @@ class ConcreteUserRepositoryTest {
     @Test
     public void should_find_all_users() throws Exception {
         // when
-        List<UserResultItem> retrievedGames = underTest.getUsers(new UserSearchCriteria());
+        List<UserResultItem> retrievedUser = underTest.getUsers(UserSearchCriteria.builder().build());
 
         // then
-        assertEquals(USER_NAMES.size(), retrievedGames.size());
-        final Set<String> retrievedGameTitles = new HashSet<>();
-        for (UserResultItem game : retrievedGames) {
-            retrievedGameTitles.add(game.name.givenName);
+        assertEquals(USER_NAMES.size(), retrievedUser.size());
+        final Set<String> retrievedNames = new HashSet<>();
+        for (UserResultItem game : retrievedUser) {
+            retrievedNames.add(game.name.givenName);
         }
-        assertTrue(retrievedGameTitles.containsAll(USER_NAMES.keySet()));
+        assertTrue(retrievedNames.containsAll(USER_NAMES.keySet()));
     }
 
     @Test
     public void whenItemsPerPageBeyondUserCount_returnsLimitedUserSet() {
         // given
-        var criteriaLow = new UserSearchCriteria();
-        criteriaLow.startIndex = 1;
-        criteriaLow.count = 2;
+        var criteriaLow = UserSearchCriteria.builder()
+        .setStartIndex(1)
+        .setCount(2).build();
 
-        var criteriaHigh = new UserSearchCriteria();
-        criteriaHigh.startIndex = criteriaLow.startIndex + 1;
-        criteriaHigh.count = 2;
+        var criteriaHigh = UserSearchCriteria.builder()
+                .setStartIndex(criteriaLow.getStartIndex() + 1)
+                .setCount(2).build();
 
         // When
         var results = underTest.getUsers(criteriaLow);
@@ -160,9 +160,9 @@ class ConcreteUserRepositoryTest {
     @Test
     void whenItemsPerPageBeyondUserCount_returnsEmptyUserSet() {
         // Given
-        var criteriaLow = new UserSearchCriteria();
-        criteriaLow.startIndex = Integer.MAX_VALUE - 1;
-        criteriaLow.count = 1;
+        var criteriaLow = UserSearchCriteria.builder()
+        .setStartIndex(Integer.MAX_VALUE - 1)
+        .setCount(1).build();
         // When
         var results = underTest.getUsers(criteriaLow);
         //Then
@@ -172,8 +172,8 @@ class ConcreteUserRepositoryTest {
     @Test
     void whenSearchByKnownUserName_thenReturnSingleElementList() {
         // Given
-        var criteria = new UserSearchCriteria();
-        criteria.userName = "gbuehr";
+        var criteria = UserSearchCriteria.builder()
+        .setUserName("gbuehr").build();
 
         var result = underTest.getUsers(criteria);
         assertEquals(1,result.size());
@@ -187,8 +187,8 @@ class ConcreteUserRepositoryTest {
     @Test
     void whenSearchByUnknownUserName_thenReturnEmpty() {
         // Given
-        var criteria = new UserSearchCriteria();
-        criteria.userName = "unknown";
+        var criteria = UserSearchCriteria.builder()
+        .setUserName("unknown").build();
 
         var result = underTest.getUsers(criteria);
         assertEquals(List.of(),result);

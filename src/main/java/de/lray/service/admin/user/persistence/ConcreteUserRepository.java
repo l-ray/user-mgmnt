@@ -35,7 +35,7 @@ public class ConcreteUserRepository implements UserRepository {
 
   private final UserPatchFactory patchFactory;
 
-  private final TypedQuery<User> FIND_USER_BY_PUBLIC_ID_QUERY;
+  private final TypedQuery<User> queryFindUserByPublicId;
 
   @Inject
   public ConcreteUserRepository(
@@ -46,7 +46,7 @@ public class ConcreteUserRepository implements UserRepository {
     this.entityManager = entityManager;
     this.utx = utx;
 
-    FIND_USER_BY_PUBLIC_ID_QUERY = entityManager.createQuery(
+    queryFindUserByPublicId = entityManager.createQuery(
             FIND_USER_BY_PUBLIC_ID_SQL, User.class);
   }
 
@@ -65,8 +65,8 @@ public class ConcreteUserRepository implements UserRepository {
     query.where(predicate);
 
     var finalQuery = entityManager.createQuery(query);
-    finalQuery.setFirstResult(searchCriteria.startIndex-1);
-    finalQuery.setMaxResults(searchCriteria.count);
+    finalQuery.setFirstResult(searchCriteria.getStartIndex()-1);
+    finalQuery.setMaxResults(searchCriteria.getCount());
 
     List<User> result = finalQuery.getResultList();
     return result.stream().map(UserToUserResultItemMapper::map).collect(Collectors.toList());
@@ -91,7 +91,7 @@ public class ConcreteUserRepository implements UserRepository {
 
   private User findUserByPublicId(String id) {
     try {
-      return FIND_USER_BY_PUBLIC_ID_QUERY.setParameter("publicId", id).getSingleResult();
+      return queryFindUserByPublicId.setParameter("publicId", id).getSingleResult();
     } catch (NoResultException ex) {
       throw new UserUnknownException("id");
     }

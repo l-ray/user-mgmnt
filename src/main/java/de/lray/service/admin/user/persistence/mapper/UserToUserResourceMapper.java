@@ -8,6 +8,8 @@ import java.util.Locale;
 
 public abstract class UserToUserResourceMapper {
 
+    private UserToUserResourceMapper() { /* keep it static */ }
+
     public static UserResource map(User item) {
         var result = new UserResource();
         UserToUserResultItemMapper.mapToResultDto(item, result);

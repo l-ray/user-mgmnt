@@ -21,6 +21,7 @@ import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.NotSupportedException;
+import jakarta.transaction.RollbackException;
 import jakarta.transaction.SystemException;
 import jakarta.transaction.UserTransaction;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -66,7 +67,8 @@ class ConcreteUserRepositoryTest {
             "Gerhard", "Buehr"
     );
 
-    String existingUserId = null;
+    String existingUserPublicId = null;
+    String existingUserName = null;
 
     @PersistenceContext
     EntityManager em;
@@ -87,9 +89,11 @@ class ConcreteUserRepositoryTest {
     private void clearData() throws Exception {
         utx.begin();
         em.joinTransaction();
+        em.flush();
         System.out.println("Dumping old records...");
         em.createQuery("delete from Credentials").executeUpdate();
         em.createQuery("delete from User").executeUpdate();
+        em.createQuery("delete from Contact ").executeUpdate();
         utx.commit();
     }
 
@@ -100,6 +104,7 @@ class ConcreteUserRepositoryTest {
         for (Map.Entry<String, String> aUser : USER_NAMES.entrySet()) {
             var creds = new Credentials();
             creds.setUsername(aUser.getKey().substring(0, 1).concat(aUser.getValue()).toLowerCase());
+            creds.setActive(true);
             var contact = new Contact();
             contact.setFirstName(aUser.getKey());
             contact.setLastName(aUser.getValue());
@@ -111,7 +116,8 @@ class ConcreteUserRepositoryTest {
             em.persist(creds);
             if (aUser.getKey().equals(USER_NAMES.keySet().iterator().next())) {
                 em.refresh(user);
-                existingUserId = user.getPublicId();
+                existingUserPublicId = user.getPublicId();
+                existingUserName = user.getCredentials().getUsername();
             }
         }
         utx.commit();
@@ -126,7 +132,11 @@ class ConcreteUserRepositoryTest {
 
     @AfterEach
     public void commitTransaction() throws Exception {
-        utx.commit();
+        try {
+            utx.commit();
+        } catch (RollbackException re) {
+            // transaction rollback happened in test case
+        }
     }
 
     @Test
@@ -181,7 +191,7 @@ class ConcreteUserRepositoryTest {
     void whenSearchByKnownUserName_thenReturnSingleElementList() {
         // Given
         var criteria = UserSearchCriteria.builder()
-                .setUserName("gbuehr").build();
+                .setUserName(existingUserName).build();
 
         var result = underTest.getUsers(criteria);
         assertEquals(1, result.size());
@@ -205,10 +215,10 @@ class ConcreteUserRepositoryTest {
     @Test
     void whenSearchById_returnsSingleResult() {
         // When
-        var result = underTest.getUser(existingUserId);
+        var result = underTest.getUser(existingUserPublicId);
 
         //Then
-        assertEquals(existingUserId, result.id);
+        assertEquals(existingUserPublicId, result.id);
         assertEquals(USER_NAMES.keySet().iterator().next(), result.name.givenName);
     }
 
@@ -218,7 +228,7 @@ class ConcreteUserRepositoryTest {
         var referenceDate = Date.from(LocalDate.now().minusDays(2).atStartOfDay().toInstant(ZoneOffset.UTC));
         em.createQuery("update User u set u.updateDate = :futureDate where not u.publicId = :publicId")
                 .setParameter("futureDate", referenceDate)
-                .setParameter("publicId", existingUserId)
+                .setParameter("publicId", existingUserPublicId)
                 .executeUpdate();
 
         // When
@@ -231,8 +241,9 @@ class ConcreteUserRepositoryTest {
         var resultPublicId = result
                 .stream().map(item -> item.id)
                 .collect(Collectors.toList());
-        assertEquals(List.of(existingUserId), resultPublicId);
+        assertEquals(List.of(existingUserPublicId), resultPublicId);
     }
+
     @Test
     void whenCreateValidUser_thenReturn() {
         // Given
@@ -249,27 +260,69 @@ class ConcreteUserRepositoryTest {
         assertEquals(userName, resultingUser.userName);
         assertNotNull(resultingUser.id);
 
-        var dbUser = (User) em.createQuery("select u from User u where u.publicId = :publicId")
-                .setParameter("publicId", resultingUser.id)
-                .getSingleResult();
+        var dbUser = getDbUserByPublicId(resultingUser.id);
 
         assertNotNull(dbUser);
+        assertEquals(user.userName, dbUser.getCredentials().getUsername());
         assertEquals(user.name.givenName, dbUser.getContact().getFirstName());
         assertEquals(user.name.familyName, dbUser.getContact().getLastName());
-        assertEquals(user.userName, dbUser.getCredentials().getUsername());
     }
 
     @Test
     void whenCreateExistingUser_thenError() throws SystemException, NotSupportedException {
         // Given
-        var userName = "gbuehr";
+        var userName = existingUserName;
         var user = ScimTestMessageFactory.createUserAdd();
         user.id = null;
         user.userName = userName;
         user.password = "12345abcde";
         // When / Then
         assertThrows(UserAlreadyExistsException.class, () -> underTest.addUser(user));
-        utx.rollback();
-        utx.begin();
+    }
+
+    @Test
+    void whenUserNameChange_thenDo() {
+        // Given
+        var userId = existingUserPublicId;
+        var newUserName = "newUserName";
+        var userDto = ScimTestMessageFactory.createUserAdd();
+        userDto.userName = newUserName;
+
+        // When
+        var result = underTest.updateUser(userId, userDto);
+
+        // Then
+        assertEquals(newUserName, result.userName);
+        var dbUser = getDbUserByPublicId(existingUserPublicId);
+        assertEquals(newUserName, dbUser.getCredentials().getUsername());
+    }
+
+    @Test
+    void whenPwOrStatusByUpdate_thenIgnore() {
+        // Given
+        //var dbUser = getDbUserByPublicId(existingUserPublicId);
+        var user = existingUserPublicId;
+        //var oldPw = dbUser.getCredentials().getPassword();
+        var userDto = ScimTestMessageFactory.createUserAdd();
+        userDto.id = existingUserPublicId;
+        userDto.active = false;
+        userDto.password = "xxx";
+
+        // When
+        var result = underTest.updateUser(
+                existingUserPublicId,
+                userDto
+        );
+
+        // Then
+        //assertEquals(oldPw, getDbUserByPublicId(existingUserPublicId).getCredentials().getPassword());
+        assertTrue(result.active);
+        assertTrue(getDbUserByPublicId(existingUserPublicId).getCredentials().isActive());
+    }
+
+    private User getDbUserByPublicId(String publicId) {
+        return (User) em.createQuery("select u from User u where u.publicId = :publicId")
+                .setParameter("publicId", publicId)
+                .getSingleResult();
     }
 }

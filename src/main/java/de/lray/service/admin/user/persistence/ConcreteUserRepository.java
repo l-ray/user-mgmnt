@@ -42,9 +42,10 @@ public class ConcreteUserRepository implements UserRepository {
     @Inject
     public ConcreteUserRepository(
             EntityManager entityManager,
-            UserTransaction utx
+            UserTransaction utx,
+            UserPatchFactory patchFactory
     ) {
-        patchFactory = new UserPatchFactory();
+        this.patchFactory = patchFactory;
         this.entityManager = entityManager;
         this.utx = utx;
 
@@ -105,7 +106,11 @@ public class ConcreteUserRepository implements UserRepository {
 
     @Override
     public UserResource patchUser(String id, UserPatch payload) {
-        throw new UnsupportedOperationException("Will potentially follow soon.");
+        var user = findUserByPublicId(id);
+        entityManager.refresh(user);
+        patchFactory.apply(user, payload.Operations);
+        var mergedUser = entityManager.merge(user);
+        return UserToUserResourceMapper.map(mergedUser);
     }
 
     private User findUserByPublicId(String id) {

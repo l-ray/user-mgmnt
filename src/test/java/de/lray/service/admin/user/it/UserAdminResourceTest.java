@@ -8,12 +8,14 @@ import de.lray.service.admin.user.*;
 import de.lray.service.admin.user.dto.*;
 import de.lray.service.admin.user.endpoint.*;
 import de.lray.service.JaxrsActivator;
+import de.lray.service.admin.user.operation.UserPatchOpAction;
 import de.lray.service.admin.user.operation.UserPatchOpField;
 import de.lray.service.admin.user.persistence.UserRepository;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.Response;
+import org.apache.http.HttpStatus;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit5.ArquillianExtension;
@@ -30,6 +32,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.logging.Logger;
 
+import static de.lray.service.admin.user.it.MockedUserRepository.MOCKED_PATCH_USER;
 import static jakarta.ws.rs.client.Entity.json;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -42,7 +45,8 @@ public class UserAdminResourceTest {
     public static WebArchive createDeployment() {
         return ShrinkWrap.create(WebArchive.class)
                 .addClasses(UserResult.class, UserResultItem.class, UserResource.class, Meta.class)
-                .addClasses(UserAdd.class, UserPatch.class, UserPatchOp.class, UserName.class, UserEmail.class, UserPhone.class, UserPatchOpField.class)
+                .addClasses(UserAdd.class, UserName.class, UserEmail.class, UserPhone.class)
+                .addClasses(UserPatch.class, UserPatchOp.class, UserPatchOpField.class, UserPatchOpAction.class)
                 .addClass(UserSearchCriteria.class)
                 .addClasses(UserRepository.class, MockedUserRepository.class, ScimTestMessageFactory.class)
                 .addClasses(UserAlreadyExistsException.class, UserUnknownException.class)
@@ -97,7 +101,7 @@ public class UserAdminResourceTest {
 
     @Test
     @DisplayName("Adding user should return error.")
-    void should_return_not_found_error_on_user_add() throws MalformedURLException {
+    void should_return_already_exists_error_on_user_add() throws MalformedURLException {
         LOGGER.info(" client: "+client+", baseURL: "+base);
         final var userTarget = this.client.target(new URL(this.base, "api/scim/v2/Users").toExternalForm());
 
@@ -132,11 +136,10 @@ public class UserAdminResourceTest {
 
     @Test
     @DisplayName("Patching user should return object.")
-    void should_return_error_on_patch() throws MalformedURLException {
+    void should_return_result_on_patch() throws MalformedURLException {
         LOGGER.info(" client: "+client+", baseURL: "+base);
         final var userTarget = this.client.target(new URL(this.base, "api/scim/v2/Users/3").toExternalForm());
-        //final var requestObject = ScimTestMessageFactory.createUserPatch();
-        final var requestObject = "{\"schemas\": [\"urn:ietf:params:scim:api:messages:2.0:PatchOp\"],\"Operations\": []}";
+        final var requestObject = ScimTestMessageFactory.createUserPatch();
 
         final var requestEntity = Entity.json(requestObject);
         try (final Response response = userTarget.request()
@@ -144,12 +147,11 @@ public class UserAdminResourceTest {
                 .property("jersey.config.client.httpUrlConnection.setMethodWorkaround", true)
                 .method("PATCH",requestEntity)) {
 
-            assertThat(response.getStatus()).isEqualTo(404);
-            var responseEntity = response.readEntity(Error.class);
-            assertThat(responseEntity.detail).contains("not found");
-            assertThat(responseEntity.status).isEqualTo(404);
+            assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_OK);
+            var responseEntity = response.readEntity(UserResource.class);
             assertThat(responseEntity.schemas).hasSize(1).first().asString().contains("scim");
+            assertThat(responseEntity).hasFieldOrPropertyWithValue("active", false);
+            assertThat(responseEntity).hasFieldOrPropertyWithValue("userName", MOCKED_PATCH_USER);
         }
     }
 }
-

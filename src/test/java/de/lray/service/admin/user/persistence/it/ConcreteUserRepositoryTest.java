@@ -6,9 +6,13 @@ import de.lray.service.admin.common.Meta;
 import de.lray.service.admin.user.UserAlreadyExistsException;
 import de.lray.service.admin.user.UserSearchCriteria;
 import de.lray.service.admin.user.UserUnknownException;
+import de.lray.service.admin.user.dto.UserPatch;
+import de.lray.service.admin.user.dto.UserPatchOp;
 import de.lray.service.admin.user.dto.UserResource;
 import de.lray.service.admin.user.dto.UserResultItem;
 import de.lray.service.admin.user.operation.UserPatchFactory;
+import de.lray.service.admin.user.operation.UserPatchOpAction;
+import de.lray.service.admin.user.operation.UserPatchOpField;
 import de.lray.service.admin.user.persistence.ConcreteUserRepository;
 import de.lray.service.admin.user.persistence.UserRepository;
 import de.lray.service.admin.user.persistence.entities.Contact;
@@ -83,7 +87,7 @@ class ConcreteUserRepositoryTest {
         clearData();
         insertData();
         startTransaction();
-        underTest = new ConcreteUserRepository(em, utx);
+        underTest = new ConcreteUserRepository(em, utx, new UserPatchFactory());
     }
 
     private void clearData() throws Exception {
@@ -318,6 +322,26 @@ class ConcreteUserRepositoryTest {
         //assertEquals(oldPw, getDbUserByPublicId(existingUserPublicId).getCredentials().getPassword());
         assertTrue(result.active);
         assertTrue(getDbUserByPublicId(existingUserPublicId).getCredentials().isActive());
+    }
+
+    @Test
+    void whenUserActiveChange_thenDo() {
+        // Given
+        var userPatch = new UserPatch();
+        var userPatchOp = new UserPatchOp();
+        userPatchOp.op = UserPatchOpAction.replace;
+        userPatchOp.value = Map.of(UserPatchOpField.active, false);
+        userPatch.Operations = Arrays.asList(userPatchOp);
+
+        // When
+        var result = underTest.patchUser(existingUserPublicId, userPatch);
+
+        // Then
+        assertFalse(result.active);
+        var dbUser = getDbUserByPublicId(existingUserPublicId);
+        em.refresh(dbUser);
+        em.refresh(dbUser.getCredentials());
+        assertTrue(dbUser.getCredentials().isActive());
     }
 
     private User getDbUserByPublicId(String publicId) {

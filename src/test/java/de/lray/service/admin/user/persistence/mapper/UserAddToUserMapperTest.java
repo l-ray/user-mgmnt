@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Arrays;
 import java.util.List;
 
-public class UserAddToUserMapperTest {
+class UserAddToUserMapperTest {
     @Test
     void should_map_all_properties() {
         // Given

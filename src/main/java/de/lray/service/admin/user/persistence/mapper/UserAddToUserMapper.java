@@ -14,9 +14,19 @@ public abstract class UserAddToUserMapper {
     private UserAddToUserMapper() { /* keep it static */ }
 
     public static User map(UserAdd payload) {
-        var result = new User();
-        result.setPublicId(payload.id);
+        var newUser = new User();
+        // public id can not be reset once created
+        newUser.setPublicId(payload.id);
+        // acive/password are only set individually
+        if (hasCredentialRelevantDate(payload)) {
+            Credentials creds = createCredentialsForUser(newUser);
+            creds.setActive(payload.active);
+            //creds.setPassword(payload.password);
+        }
+        return map(payload, newUser);
+    }
 
+    public static User map(UserAdd payload, User result) {
         if (hasContactRelevantDate(payload)) {
             var aContact = new Contact();
             aContact.setFirstName(payload.name.givenName);
@@ -27,12 +37,8 @@ public abstract class UserAddToUserMapper {
         }
 
         if (hasCredentialRelevantDate(payload)) {
-            var creds = new Credentials();
+            var creds = createCredentialsForUser(result);
             creds.setUsername(payload.userName);
-            creds.setActive(payload.active);
-            //creds.setPassword(payload.password);
-            creds.setUser(result);
-            result.setCredentials(creds);
         }
         // handle roles
         return result;
@@ -61,5 +67,15 @@ public abstract class UserAddToUserMapper {
 
     private static boolean hasCredentialRelevantDate(UserAdd payload) {
         return payload.userName != null;
+    }
+
+    private static Credentials createCredentialsForUser(User newUser) {
+        var creds = newUser.getCredentials();
+        if (creds == null) {
+            creds = new Credentials();
+            newUser.setCredentials(creds);
+            creds.setUser(newUser);
+        }
+        return creds;
     }
 }

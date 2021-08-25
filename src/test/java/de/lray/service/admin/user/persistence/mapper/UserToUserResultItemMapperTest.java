@@ -6,8 +6,6 @@ import de.lray.service.admin.user.persistence.entities.User;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class UserToUserResultItemMapperTest {
 
     @Test

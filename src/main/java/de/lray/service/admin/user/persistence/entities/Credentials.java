@@ -14,10 +14,10 @@ public class Credentials extends Keyable {
     private User user;
 
     @Column(columnDefinition = "boolean default true")
-    private boolean active;
+    private Boolean active;
 
     @Column(columnDefinition = "boolean default false")
-    private boolean locked;
+    private Boolean locked;
 
     public String getUsername() {
         return username;
@@ -35,19 +35,19 @@ public class Credentials extends Keyable {
         this.user = user;
     }
 
-    public boolean isActive() {
+    public Boolean isActive() {
         return active;
     }
 
-    public void setActive(boolean active) {
+    public void setActive(Boolean active) {
         this.active = active;
     }
 
-    public boolean isLocked() {
+    public Boolean isLocked() {
         return locked;
     }
 
-    public void setLocked(boolean locked) {
+    public void setLocked(Boolean locked) {
         this.locked = locked;
     }
 }

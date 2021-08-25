@@ -5,6 +5,7 @@ import de.lray.service.admin.user.dto.UserName;
 import de.lray.service.admin.user.dto.UserPhone;
 import de.lray.service.admin.user.dto.UserResultItem;
 import de.lray.service.admin.user.persistence.entities.Contact;
+import de.lray.service.admin.user.persistence.entities.Credentials;
 import de.lray.service.admin.user.persistence.entities.User;
 
 import java.text.SimpleDateFormat;
@@ -35,10 +36,8 @@ public abstract class UserToUserResultItemMapper {
         result = result == null ? new UserResultItem() : result;
         result.id = item.getPublicId();
 
-        var credentials = item.getCredentials();
+        mapCredentials(result, item.getCredentials() );
 
-        result.userName = credentials.getUsername();
-        result.active = credentials.isActive() && !credentials.isLocked();
         result.name = mapUserName(item.getContact());
 
         result.emails = mapEmails(item.getContact());
@@ -46,6 +45,12 @@ public abstract class UserToUserResultItemMapper {
 
         // result.roles = item.Roles.stream().map((elt) -> elt.Role.DisplayName).toList()
         return result;
+    }
+
+    private static void mapCredentials(UserResultItem result, Credentials credentials) {
+        result.userName = credentials.getUsername();
+        result.active = Objects.requireNonNullElse(credentials.isActive(), true)
+                && !Objects.requireNonNullElse(credentials.isLocked(), false);
     }
 
     private static List<UserPhone> mapPhones(Contact contact) {
@@ -69,6 +74,5 @@ public abstract class UserToUserResultItemMapper {
         // item.middleName = user.MiddleName;
         item.familyName = contact.getLastName();
         return item;
-
     }
 }

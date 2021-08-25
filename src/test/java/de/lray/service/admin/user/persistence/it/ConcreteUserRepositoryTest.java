@@ -3,6 +3,7 @@ package de.lray.service.admin.user.persistence.it;
 import de.lray.service.admin.Resources;
 import de.lray.service.admin.ScimTestMessageFactory;
 import de.lray.service.admin.common.Meta;
+import de.lray.service.admin.user.UserAlreadyExistsException;
 import de.lray.service.admin.user.UserSearchCriteria;
 import de.lray.service.admin.user.UserUnknownException;
 import de.lray.service.admin.user.dto.UserResource;
@@ -13,11 +14,14 @@ import de.lray.service.admin.user.persistence.UserRepository;
 import de.lray.service.admin.user.persistence.entities.Contact;
 import de.lray.service.admin.user.persistence.entities.Credentials;
 import de.lray.service.admin.user.persistence.entities.User;
+import de.lray.service.admin.user.persistence.mapper.UserAddToUserMapper;
 import de.lray.service.admin.user.persistence.mapper.UserToUserResourceMapper;
 import de.lray.service.admin.user.persistence.mapper.UserToUserResultItemMapper;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.NotSupportedException;
+import jakarta.transaction.SystemException;
 import jakarta.transaction.UserTransaction;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit5.ArquillianExtension;
@@ -48,9 +52,10 @@ class ConcreteUserRepositoryTest {
                 .addPackage(Meta.class.getPackage())
                 .addPackage(UserSearchCriteria.class.getPackage())
                 .addPackage(UserPatchFactory.class.getPackage())
-                .addClasses(UserToUserResultItemMapper.class, UserToUserResourceMapper.class)
+                .addClasses(UserToUserResultItemMapper.class, UserToUserResourceMapper.class, UserAddToUserMapper.class)
                 .addPackage(ConcreteUserRepository.class.getPackage())
                 .addClass(Resources.class)
+                .addClass(ScimTestMessageFactory.class)
                 .addAsResource("test-persistence.xml", "META-INF/persistence.xml")
                 .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
@@ -228,5 +233,43 @@ class ConcreteUserRepositoryTest {
                 .collect(Collectors.toList());
         assertEquals(List.of(existingUserId), resultPublicId);
     }
-    
+    @Test
+    void whenCreateValidUser_thenReturn() {
+        // Given
+        var userName = "myNewUser";
+        var user = ScimTestMessageFactory.createUserAdd();
+        user.id = null;
+        user.userName = userName;
+        user.password = "12345abcde";
+        // When
+        var resultingUser = underTest.addUser(user);
+
+        // Then
+        assertNotNull(resultingUser);
+        assertEquals(userName, resultingUser.userName);
+        assertNotNull(resultingUser.id);
+
+        var dbUser = (User) em.createQuery("select u from User u where u.publicId = :publicId")
+                .setParameter("publicId", resultingUser.id)
+                .getSingleResult();
+
+        assertNotNull(dbUser);
+        assertEquals(user.name.givenName, dbUser.getContact().getFirstName());
+        assertEquals(user.name.familyName, dbUser.getContact().getLastName());
+        assertEquals(user.userName, dbUser.getCredentials().getUsername());
+    }
+
+    @Test
+    void whenCreateExistingUser_thenError() throws SystemException, NotSupportedException {
+        // Given
+        var userName = "gbuehr";
+        var user = ScimTestMessageFactory.createUserAdd();
+        user.id = null;
+        user.userName = userName;
+        user.password = "12345abcde";
+        // When / Then
+        assertThrows(UserAlreadyExistsException.class, () -> underTest.addUser(user));
+        utx.rollback();
+        utx.begin();
+    }
 }

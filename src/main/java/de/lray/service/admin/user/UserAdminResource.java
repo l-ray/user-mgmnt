@@ -9,8 +9,6 @@ import jakarta.ws.rs.PATCH;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.HttpHeaders;
-import jakarta.ws.rs.core.MultivaluedMap;
-import jakarta.ws.rs.core.UriInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,24 +49,25 @@ public class UserAdminResource implements UserAdminApi {
         // e.g. filter=userName%20eq%20%22myemail%40example.com%22
         LOGGER.info("GetUsers filter {} start index {} count {}",filter, startIndex, count);
 
-        UserSearchCriteria searchCriteria = new UserSearchCriteria();
-        searchCriteria.startIndex = startIndex == null ? 1 : startIndex;
-        searchCriteria.count = count == null ? DEFAULT_COUNT_VALUE : count;
-        searchCriteria.userName = filter != null && filter.contains(FILTER_USER_NAME_EQ)
+        var searchCriteriaBuilder = UserSearchCriteria.builder();
+        searchCriteriaBuilder.setStartIndex(startIndex == null ? 1 : startIndex);
+        searchCriteriaBuilder.setCount(count == null ? DEFAULT_COUNT_VALUE : count);
+        searchCriteriaBuilder.setUserName(filter != null && filter.contains(FILTER_USER_NAME_EQ)
                 ? filter.substring(filter.indexOf(FILTER_USER_NAME_EQ)).split("\"", MAX_SPLITS_NEEDED)[1]
-                : null;
-        searchCriteria.lastModifiedAfter = filter != null && filter.contains(FILTER_LAST_MODIFIED_GT)
+                : null);
+        searchCriteriaBuilder.setLastModifiedAfter(filter != null && filter.contains(FILTER_LAST_MODIFIED_GT)
                 ? new SimpleDateFormat(REST_DATE_FORMAT).parse(
                 filter.substring(filter.indexOf(FILTER_LAST_MODIFIED_GT))
                         .split("\"", MAX_SPLITS_NEEDED)[1]
-        )
-                : null;
+                )
+                : null);
+        var searchCriteria = searchCriteriaBuilder.build();
 
         List<UserResultItem> resources = repository.getUsers(searchCriteria);
         UserResult response = new UserResult();
         response.totalResults = resources.size();
         response.startIndex = startIndex == null ? 1 : startIndex;
-        response.itemsPerPage = searchCriteria.count;
+        response.itemsPerPage = searchCriteria.getCount();
         response.Resources = resources;
 
         return response;

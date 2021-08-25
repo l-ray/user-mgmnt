@@ -7,7 +7,6 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import jakarta.persistence.metamodel.Metamodel;
-import jdk.jfr.MemoryAddress;
 
 import java.util.function.Consumer;
 
@@ -30,18 +29,18 @@ public class UserSearchQueryCriteriaConsumer implements Consumer<UserSearchCrite
     @Override
     public void accept(UserSearchCriteria param) {
 
-        if (param.userName != null) {
+        if (param.getUserName() != null) {
             var join = r.join(model.entity(User.class).getSingularAttribute("credentials"));
             predicate = builder.and(predicate, builder.equal(
                     join.get(model.entity(Credentials.class).getSingularAttribute("username")),
-                    param.userName
+                    param.getUserName()
                     )
             );
         }
 
-        if (param.lastModifiedAfter != null) {
+        if (param.getLastModifiedAfter() != null) {
             predicate = builder.and(predicate, builder
-                    .greaterThanOrEqualTo(r.get("updateTime"), param.lastModifiedAfter));
+                    .greaterThanOrEqualTo(r.get("updateTime"), param.getLastModifiedAfter()));
         }
 
     }

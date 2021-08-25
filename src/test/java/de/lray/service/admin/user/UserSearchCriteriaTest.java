@@ -5,36 +5,37 @@ import org.junit.jupiter.api.Test;
 import java.time.Instant;
 import java.util.Date;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 class UserSearchCriteriaTest {
 
     @Test
     void emptyObjectsEqual() {
-        var first = new UserSearchCriteria();
-        var scnd = new UserSearchCriteria();
+        var first = UserSearchCriteria.builder()
+                .setAllNull().build();
+        var scnd = UserSearchCriteria.builder().setAllNull().build();
         assertEquals(first,scnd);
     }
 
     @Test
     void similarObjectsEqual() {
-        assertEquals(create(), create());
+        assertEquals(builder().build(), builder().build());
     }
 
     @Test
     void differingObjectsFail() {
-        var first = create();
-        var scnd = create();
-        scnd.userName = "other";
-        assertNotEquals(first, scnd);
+        var first = builder();
+        var scnd = builder();
+        scnd.setUserName("other");
+        assertNotEquals(first.build(), scnd.build());
     }
 
-    private UserSearchCriteria create() {
-        var item =  new UserSearchCriteria();
-        item.userName = "bla";
-        item.startIndex = 1;
-        item.count = 2;
-        item.lastModifiedAfter = Date.from(Instant.ofEpochSecond(0));
-        return item;
+    private UserSearchCriteria.Builder builder() {
+        return UserSearchCriteria.builder()
+        .setUserName("bla")
+        .setStartIndex(1)
+        .setCount(2)
+        .setLastModifiedAfter(Date.from(Instant.ofEpochSecond(0)));
     }
 }

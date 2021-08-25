@@ -4,8 +4,6 @@ package de.lray.service.admin.user;
 import de.lray.service.admin.common.Meta;
 import de.lray.service.admin.user.dto.*;
 import de.lray.service.admin.user.persistence.UserRepository;
-import jakarta.ws.rs.core.MultivaluedHashMap;
-import jakarta.ws.rs.core.UriInfo;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.description.TextDescription;
 import org.junit.jupiter.api.Test;
@@ -14,7 +12,10 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Mockito;
 
 import java.text.ParseException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -78,11 +79,11 @@ class UserAdminResourceTest {
     @Test
     void whenUsernameFilterGiven_returnResult() throws ParseException {
         // Given
-        var expectedSearchCriteria = new UserSearchCriteria();
-        expectedSearchCriteria.userName = "myemail@example.com";
-        expectedSearchCriteria.startIndex = 0;
-        expectedSearchCriteria.count = 1;
-        expectedSearchCriteria.lastModifiedAfter = null;
+        var expectedSearchCriteria = UserSearchCriteria.builder()
+                .setUserName("myemail@example.com")
+                .setStartIndex(0)
+                .setCount(1)
+                .setLastModifiedAfter(null).build();
 
         var expectedResult = new UserResultItem();
 
@@ -92,7 +93,7 @@ class UserAdminResourceTest {
         );
 
         // When
-        var result = new UserAdminResource(repo).getUsers("userName eq \"myemail@example.com\"",0,1);
+        var result = new UserAdminResource(repo).getUsers("userName eq \"myemail@example.com\"", 0, 1);
 
         // Then
         Assertions.assertThat(result.Resources).containsOnly(expectedResult);
@@ -102,11 +103,12 @@ class UserAdminResourceTest {
     @Test
     void whenLastModifiedFilterGiven_returnResult() throws ParseException {
         // Given
-        var expectedSearchCriteria = new UserSearchCriteria();
-        expectedSearchCriteria.userName = null;
-        expectedSearchCriteria.startIndex = 0;
-        expectedSearchCriteria.count = 1;
-        expectedSearchCriteria.lastModifiedAfter = new GregorianCalendar(2020, Calendar.APRIL, 7, 14, 19, 34).getTime();
+        var expectedSearchCriteria = UserSearchCriteria.builder()
+                .setUserName(null)
+                .setStartIndex(0)
+                .setCount(1)
+                .setLastModifiedAfter(new GregorianCalendar(2020, Calendar.APRIL, 7, 14, 19, 34).getTime())
+                .build();
 
         var expectedResult = new UserResultItem();
 
@@ -114,7 +116,7 @@ class UserAdminResourceTest {
         when(repo.getUsers(expectedSearchCriteria)).thenReturn(Arrays.asList(expectedResult));
 
         // When
-        var result = new UserAdminResource(repo).getUsers("meta.lastModified gt \"2020-04-07T14:19:34Z\"",0,1);
+        var result = new UserAdminResource(repo).getUsers("meta.lastModified gt \"2020-04-07T14:19:34Z\"", 0, 1);
 
         // Then
         Assertions.assertThat(result.Resources).containsOnly(expectedResult);

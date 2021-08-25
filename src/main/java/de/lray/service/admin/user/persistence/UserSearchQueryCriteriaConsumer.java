@@ -40,7 +40,7 @@ public class UserSearchQueryCriteriaConsumer implements Consumer<UserSearchCrite
 
         if (param.getLastModifiedAfter() != null) {
             predicate = builder.and(predicate, builder
-                    .greaterThanOrEqualTo(r.get("updateTime"), param.getLastModifiedAfter()));
+                    .greaterThan(r.get("updateDate"), param.getLastModifiedAfter()));
         }
 
     }

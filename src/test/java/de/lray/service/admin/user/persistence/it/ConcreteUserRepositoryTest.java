@@ -1,6 +1,7 @@
 package de.lray.service.admin.user.persistence.it;
 
 import de.lray.service.admin.Resources;
+import de.lray.service.admin.ScimTestMessageFactory;
 import de.lray.service.admin.common.Meta;
 import de.lray.service.admin.user.UserSearchCriteria;
 import de.lray.service.admin.user.UserUnknownException;
@@ -18,7 +19,6 @@ import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.UserTransaction;
-import org.assertj.core.api.Assertions;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit5.ArquillianExtension;
 import org.jboss.shrinkwrap.api.Archive;
@@ -30,7 +30,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -53,9 +56,9 @@ class ConcreteUserRepositoryTest {
     }
 
     private static final Map<String, String> USER_NAMES = Map.of(
-                "Super", "Mario",
-                "Katrin", "Arma",
-                "Gerhard", "Buehr"
+            "Super", "Mario",
+            "Katrin", "Arma",
+            "Gerhard", "Buehr"
     );
 
     String existingUserId = null;
@@ -91,7 +94,7 @@ class ConcreteUserRepositoryTest {
         System.out.println("Inserting records...");
         for (Map.Entry<String, String> aUser : USER_NAMES.entrySet()) {
             var creds = new Credentials();
-            creds.setUsername(aUser.getKey().substring(0,1).concat(aUser.getValue()).toLowerCase());
+            creds.setUsername(aUser.getKey().substring(0, 1).concat(aUser.getValue()).toLowerCase());
             var contact = new Contact();
             contact.setFirstName(aUser.getKey());
             contact.setLastName(aUser.getValue());
@@ -139,8 +142,8 @@ class ConcreteUserRepositoryTest {
     public void whenItemsPerPageBeyondUserCount_returnsLimitedUserSet() {
         // given
         var criteriaLow = UserSearchCriteria.builder()
-        .setStartIndex(1)
-        .setCount(2).build();
+                .setStartIndex(1)
+                .setCount(2).build();
 
         var criteriaHigh = UserSearchCriteria.builder()
                 .setStartIndex(criteriaLow.getStartIndex() + 1)
@@ -161,8 +164,8 @@ class ConcreteUserRepositoryTest {
     void whenItemsPerPageBeyondUserCount_returnsEmptyUserSet() {
         // Given
         var criteriaLow = UserSearchCriteria.builder()
-        .setStartIndex(Integer.MAX_VALUE - 1)
-        .setCount(1).build();
+                .setStartIndex(Integer.MAX_VALUE - 1)
+                .setCount(1).build();
         // When
         var results = underTest.getUsers(criteriaLow);
         //Then
@@ -173,25 +176,25 @@ class ConcreteUserRepositoryTest {
     void whenSearchByKnownUserName_thenReturnSingleElementList() {
         // Given
         var criteria = UserSearchCriteria.builder()
-        .setUserName("gbuehr").build();
+                .setUserName("gbuehr").build();
 
         var result = underTest.getUsers(criteria);
-        assertEquals(1,result.size());
+        assertEquals(1, result.size());
     }
 
     @Test
     void whenSpecificUserNotExists_thenHandle() {
-        assertThrows(UserUnknownException.class,() -> underTest.getUser("unknown"));
+        assertThrows(UserUnknownException.class, () -> underTest.getUser("unknown"));
     }
 
     @Test
     void whenSearchByUnknownUserName_thenReturnEmpty() {
         // Given
         var criteria = UserSearchCriteria.builder()
-        .setUserName("unknown").build();
+                .setUserName("unknown").build();
 
         var result = underTest.getUsers(criteria);
-        assertEquals(List.of(),result);
+        assertEquals(List.of(), result);
     }
 
     @Test
@@ -203,4 +206,27 @@ class ConcreteUserRepositoryTest {
         assertEquals(existingUserId, result.id);
         assertEquals(USER_NAMES.keySet().iterator().next(), result.name.givenName);
     }
+
+    @Test
+    void whenSearchByLastModified_thenReturn() {
+        //Given
+        var referenceDate = Date.from(LocalDate.now().minusDays(2).atStartOfDay().toInstant(ZoneOffset.UTC));
+        em.createQuery("update User u set u.updateDate = :futureDate where not u.publicId = :publicId")
+                .setParameter("futureDate", referenceDate)
+                .setParameter("publicId", existingUserId)
+                .executeUpdate();
+
+        // When
+        var result = underTest.getUsers(
+                UserSearchCriteria.builder()
+                        .setLastModifiedAfter(referenceDate)
+                        .build()
+        );
+        // Then
+        var resultPublicId = result
+                .stream().map(item -> item.id)
+                .collect(Collectors.toList());
+        assertEquals(List.of(existingUserId), resultPublicId);
+    }
+    
 }

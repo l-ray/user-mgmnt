@@ -20,6 +20,8 @@ import java.util.List;
 @Default
 public class MockedUserRepository implements UserRepository {
 
+    public static final String MOCKED_PATCH_USER = "mockedPatchUser";
+
     public MockedUserRepository() {}
 
     @Override
@@ -44,6 +46,9 @@ public class MockedUserRepository implements UserRepository {
 
     @Override
     public UserResource patchUser(String userId, UserPatch payload) {
-        throw new UserUnknownException("Test - not found ");
+        var result = ScimTestMessageFactory.createUserAdd();
+        result.active = false;
+        result.userName = MOCKED_PATCH_USER;
+        return result;
     }
 }

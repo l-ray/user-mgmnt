@@ -1,3 +1,3 @@
-insert into CONTACT (ID, FIRSTNAME, LASTNAME) values (1, 'erika', 'mustermann');
-insert into USER (ID, SYSTEMUSER, CONTACT_ID) values (1, false, 1);
-insert into CREDENTIALS (ID, USER_ID, USERNAME) values (1, 1, 'emustermann');
+insert into CONTACT (ID, PUBLICID, FIRSTNAME, LASTNAME, PRIMARYEMAIL, PHONENUMBER) values (1, 'public:1', 'Erika', 'Mustermann', 'erik@must.er', '+49 11833' );
+insert into USER (ID, PUBLICID, SYSTEMUSER, CONTACT_ID) values (1, 'public:1', false, 1);
+insert into CREDENTIALS (ID, PUBLICID, USER_ID, USERNAME) values (1, 'public:1', 1, 'emustermann');

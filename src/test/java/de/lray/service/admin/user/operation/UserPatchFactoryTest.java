@@ -1,15 +1,14 @@
 package de.lray.service.admin.user.operation;
 
 import de.lray.service.admin.user.dto.UserPatchOp;
+import de.lray.service.admin.user.dto.UserPatchOpValues;
 import de.lray.service.admin.user.persistence.entities.Credentials;
 import de.lray.service.admin.user.persistence.entities.User;
-import jakarta.validation.ValidationException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.List;
-import java.util.Map;
 
 class UserPatchFactoryTest {
 
@@ -27,7 +26,7 @@ class UserPatchFactoryTest {
         // Given
         var readOnlyUser = Mockito.mock(User.class);
         var userPatchOp = new UserPatchOp();
-        userPatchOp.value = Map.of();
+        userPatchOp.value = new UserPatchOpValues();
         // When / Then
         var underTest = new UserPatchFactory();
         var operations = List.of(userPatchOp);
@@ -44,8 +43,10 @@ class UserPatchFactoryTest {
         Mockito.when(readOnlyUser.getCredentials()).thenReturn(credentials);
 
         var userPatchOp = new UserPatchOp();
+        var patchOpVal = new UserPatchOpValues();
+        patchOpVal.active = false;
         userPatchOp.op = UserPatchOpAction.replace;
-        userPatchOp.value = Map.of(UserPatchOpField.active, false);
+        userPatchOp.value = patchOpVal;
         // When
         new UserPatchFactory().apply(readOnlyUser, List.of(userPatchOp));
         // Then
@@ -53,21 +54,20 @@ class UserPatchFactoryTest {
     }
 
     @Test
-    void whenWrongActivePatchOpValueType_thenError() {
+    void whenPasswordPatchOpValue_thenSet() {
         // Given
         var readOnlyUser = Mockito.mock(User.class);
         var credentials = Mockito.mock(Credentials.class);
         Mockito.when(readOnlyUser.getCredentials()).thenReturn(credentials);
 
         var userPatchOp = new UserPatchOp();
+        var patchOpVal = new UserPatchOpValues();
+        patchOpVal.password = "Pa$$w0r|)";
         userPatchOp.op = UserPatchOpAction.replace;
-        userPatchOp.value = Map.of(UserPatchOpField.active, "waddehadde");
-        var underTest = new UserPatchFactory();
-        // When / Then
-        var operations = List.of(userPatchOp);
-        Assertions.assertThatThrownBy(() -> underTest.apply(readOnlyUser, operations))
-                .isInstanceOf(ValidationException.class)
-                .hasMessageContaining("waddehadde")
-                .hasMessageContaining("active");
+        userPatchOp.value = patchOpVal;
+        // When
+        new UserPatchFactory().apply(readOnlyUser, List.of(userPatchOp));
+        // Then
+        //Mockito.verify(credentials, Mockito.times(1)).setPassword(false);
     }
 }

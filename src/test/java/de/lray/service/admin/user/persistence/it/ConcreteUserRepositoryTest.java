@@ -6,13 +6,9 @@ import de.lray.service.admin.common.Meta;
 import de.lray.service.admin.user.UserAlreadyExistsException;
 import de.lray.service.admin.user.UserSearchCriteria;
 import de.lray.service.admin.user.UserUnknownException;
-import de.lray.service.admin.user.dto.UserPatch;
-import de.lray.service.admin.user.dto.UserPatchOp;
-import de.lray.service.admin.user.dto.UserResource;
-import de.lray.service.admin.user.dto.UserResultItem;
+import de.lray.service.admin.user.dto.*;
 import de.lray.service.admin.user.operation.UserPatchFactory;
 import de.lray.service.admin.user.operation.UserPatchOpAction;
-import de.lray.service.admin.user.operation.UserPatchOpField;
 import de.lray.service.admin.user.persistence.ConcreteUserRepository;
 import de.lray.service.admin.user.persistence.UserRepository;
 import de.lray.service.admin.user.persistence.entities.Contact;
@@ -329,8 +325,10 @@ class ConcreteUserRepositoryTest {
         // Given
         var userPatch = new UserPatch();
         var userPatchOp = new UserPatchOp();
+        var patchOpVal = new UserPatchOpValues();
+        patchOpVal.active = false;
         userPatchOp.op = UserPatchOpAction.replace;
-        userPatchOp.value = Map.of(UserPatchOpField.active, false);
+        userPatchOp.value = patchOpVal;
         userPatch.Operations = Arrays.asList(userPatchOp);
 
         // When

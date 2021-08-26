@@ -2,10 +2,8 @@ package de.lray.service.admin;
 
 import de.lray.service.admin.user.dto.*;
 import de.lray.service.admin.user.operation.UserPatchOpAction;
-import de.lray.service.admin.user.operation.UserPatchOpField;
 
 import java.util.Arrays;
-import java.util.Map;
 
 public abstract class ScimTestMessageFactory {
 
@@ -54,8 +52,10 @@ public abstract class ScimTestMessageFactory {
   public static UserPatch createUserPatch() {
     var result = new UserPatch();
     var pwOps = new UserPatchOp();
+    var pwOpVal = new UserPatchOpValues();
+    pwOpVal.active = false;
     pwOps.op = UserPatchOpAction.replace;
-    pwOps.value = Map.of(UserPatchOpField.active, false);
+    pwOps.value = pwOpVal;
     result.Operations  = Arrays.asList(pwOps);
     return result;
   }

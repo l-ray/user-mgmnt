@@ -9,7 +9,6 @@ import de.lray.service.admin.user.dto.*;
 import de.lray.service.admin.user.endpoint.*;
 import de.lray.service.JaxrsActivator;
 import de.lray.service.admin.user.operation.UserPatchOpAction;
-import de.lray.service.admin.user.operation.UserPatchOpField;
 import de.lray.service.admin.user.persistence.UserRepository;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
@@ -46,7 +45,7 @@ public class UserAdminResourceTest {
         return ShrinkWrap.create(WebArchive.class)
                 .addClasses(UserResult.class, UserResultItem.class, UserResource.class, Meta.class)
                 .addClasses(UserAdd.class, UserName.class, UserEmail.class, UserPhone.class)
-                .addClasses(UserPatch.class, UserPatchOp.class, UserPatchOpField.class, UserPatchOpAction.class)
+                .addClasses(UserPatch.class, UserPatchOp.class, UserPatchOpAction.class, UserPatchOpValues.class)
                 .addClass(UserSearchCriteria.class)
                 .addClasses(UserRepository.class, MockedUserRepository.class, ScimTestMessageFactory.class)
                 .addClasses(UserAlreadyExistsException.class, UserUnknownException.class)

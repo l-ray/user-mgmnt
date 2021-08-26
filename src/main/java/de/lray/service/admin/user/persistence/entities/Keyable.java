@@ -13,10 +13,11 @@ abstract public class Keyable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private final Long id = 0L;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String publicId = "";
-
+    @Column(columnDefinition = "DATE DEFAULT CURRENT_DATE")
     private Date updateDate = new Date(0);
+    @Column(columnDefinition = "DATE DEFAULT CURRENT_DATE")
     private Date creationDate = new Date(0);
 
     public Long getId() {

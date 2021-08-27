@@ -43,9 +43,9 @@ public class UserAdminResourceTest {
     @Deployment(testable = false)
     public static WebArchive createDeployment() {
         return ShrinkWrap.create(WebArchive.class)
-                .addClasses(UserResult.class, UserResultItem.class, UserResource.class, Meta.class)
-                .addClasses(UserAdd.class, UserName.class, UserEmail.class, UserPhone.class)
-                .addClasses(UserPatch.class, UserPatchOp.class, UserPatchOpAction.class, UserPatchOpValues.class)
+                .addPackage(UserResult.class.getPackage())
+                .addPackage(Meta.class.getPackage())
+                .addClasses(UserPatchOpAction.class)
                 .addClass(UserSearchCriteria.class)
                 .addClasses(UserRepository.class, MockedUserRepository.class, ScimTestMessageFactory.class)
                 .addClasses(UserAlreadyExistsException.class, UserUnknownException.class)
@@ -105,12 +105,11 @@ public class UserAdminResourceTest {
         final var userTarget = this.client.target(new URL(this.base, "api/scim/v2/Users").toExternalForm());
 
         var payload = ScimTestMessageFactory.createUserAdd();
-        payload.password = "123";
+        payload.setPassword("123");
 
         try (final Response response = userTarget.request(ServiceProviderConfigResource.SCIM_MEDIA_TYPE)
                 .accept(ServiceProviderConfigResource.SCIM_MEDIA_TYPE)
                 .post(json(payload))) {
-
             assertThat(response.getStatus()).isEqualTo(409);
             var responseEntity = response.readEntity(Error.class);
             assertThat(responseEntity.detail).contains("already exists");

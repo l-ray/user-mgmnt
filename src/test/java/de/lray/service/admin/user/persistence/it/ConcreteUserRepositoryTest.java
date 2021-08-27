@@ -251,7 +251,7 @@ class ConcreteUserRepositoryTest {
         var user = ScimTestMessageFactory.createUserAdd();
         user.id = null;
         user.userName = userName;
-        user.password = "12345abcde";
+        user.setPassword("12345abcde");
         // When
         var resultingUser = underTest.addUser(user);
 
@@ -275,7 +275,7 @@ class ConcreteUserRepositoryTest {
         var user = ScimTestMessageFactory.createUserAdd();
         user.id = null;
         user.userName = userName;
-        user.password = "12345abcde";
+        user.setPassword("12345abcde");
         // When / Then
         assertThrows(UserAlreadyExistsException.class, () -> underTest.addUser(user));
     }
@@ -306,7 +306,7 @@ class ConcreteUserRepositoryTest {
         var userDto = ScimTestMessageFactory.createUserAdd();
         userDto.id = existingUserPublicId;
         userDto.active = false;
-        userDto.password = "xxx";
+        userDto.setPassword( "xxx");
 
         // When
         var result = underTest.updateUser(

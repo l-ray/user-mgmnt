@@ -1,31 +1,23 @@
 package de.lray.service.admin.user.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.json.bind.annotation.JsonbProperty;
 import jakarta.validation.constraints.NotEmpty;
 
-import java.util.Map;
 import java.util.StringJoiner;
 
 @SuppressWarnings("java:S1104")
 public class UserAdd extends UserResource {
 
   @NotEmpty
-  public String password = null;
+  protected String password = null;
 
-  @JsonProperty(value = "urn:okta:onprem_app:1.0:user:custom")
-  @JsonbProperty(value = "urn:okta:onprem_app:1.0:user:custom")
-  public static final Map<String, Object> custom  = Map.of(
-      "isAdmin", false,
-      "isOkta", true,
-      "departmentName", "Cloud Service"
-  );
+  public void setPassword(String password) {
+    this.password = password;
+  }
 
   @Override
   public String toString() {
     return new StringJoiner(", ", UserAdd.class.getSimpleName() + "[", "]")
-            .add("password='" + password + "'")
-            .add("custom=" + custom)
+            .add("password='" + (password == null ? "is null" : password.substring(0,1)+"***") + "'")
             .add("displayName='" + displayName + "'")
             .add("preferredLanguage='" + preferredLanguage + "'")
             .add("locale='" + locale + "'")

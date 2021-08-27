@@ -9,7 +9,7 @@ import java.util.Objects;
 @SuppressWarnings("java:S1104")
 public class Error {
 
-  public static final List<String> schemas
+  public final List<String> schemas
           = List.of("urn:ietf:params:scim:api:messages:2.0:Error");
   public int status = HttpStatus.SC_NOT_FOUND;
   public String detail = "Not Found";

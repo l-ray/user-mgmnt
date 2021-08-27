@@ -10,7 +10,7 @@ import java.util.Map;
 @SuppressWarnings("java:S1104")
 public class ServiceProviderConfig {
 
-    public static final List<String> schemas = List.of(
+    public final List<String> schemas = List.of(
             "urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig"
     );
     public static final String SUPPORTED = "supported";

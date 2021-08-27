@@ -9,7 +9,7 @@ import java.util.Objects;
 @SuppressWarnings("java:S1104")
 public class UserResultItem {
 
-    public static final List<String> schemas =
+    public final List<String> schemas =
             List.of("urn:ietf:params:scim:schemas:core:2.0:User");
 
     public String id;
@@ -23,6 +23,7 @@ public class UserResultItem {
     public List<UserEmail> emails;
     public List<UserPhone> phoneNumbers;
     public List<String> roles;
+    public List<String> groups;
 
     public Meta meta;
 

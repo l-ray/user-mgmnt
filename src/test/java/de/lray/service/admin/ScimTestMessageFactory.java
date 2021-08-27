@@ -12,12 +12,17 @@ public abstract class ScimTestMessageFactory {
   private ScimTestMessageFactory() { }
 
   public static UserAdd createUserAdd() {
-    var result = new UserAdd();
+    var result = new UserAdd(){
+      // this way, produced payloads in tests reflect the password set.
+      public String getPassword() {
+        return this.password;
+      }
+    };
     result.id = EXAMPLE_ID;
     result.userName = "bjensen@example.com";
     result.active = true;
 
-    result.password = "secret";
+    result.setPassword("secret");
 
     result.name = new UserName();
     result.name.middleName = "the";

@@ -1,8 +1,8 @@
 package de.lray.service.admin.user.persistence;
 
-import de.lray.service.admin.user.UserAlreadyExistsException;
+import de.lray.service.admin.user.exception.UserAlreadyExistsException;
 import de.lray.service.admin.user.UserSearchCriteria;
-import de.lray.service.admin.user.UserUnknownException;
+import de.lray.service.admin.user.exception.UserUnknownException;
 import de.lray.service.admin.user.dto.UserAdd;
 import de.lray.service.admin.user.dto.UserPatch;
 import de.lray.service.admin.user.dto.UserResource;
@@ -12,7 +12,6 @@ import de.lray.service.admin.user.persistence.entities.User;
 import de.lray.service.admin.user.persistence.mapper.UserAddToUserMapper;
 import de.lray.service.admin.user.persistence.mapper.UserToUserResourceMapper;
 import de.lray.service.admin.user.persistence.mapper.UserToUserResultItemMapper;
-import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;

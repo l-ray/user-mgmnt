@@ -1,16 +1,14 @@
-package de.lray.service.admin.common.it;
+package de.lray.service.admin.common.dto.it;
 
-import de.lray.service.admin.user.UserAlreadyExistsException;
-import de.lray.service.admin.user.UserUnknownException;
+import de.lray.service.admin.user.exception.UserAlreadyExistsException;
+import de.lray.service.admin.user.exception.UserCreationException;
+import de.lray.service.admin.user.exception.UserUnknownException;
 import de.lray.service.admin.user.dto.UserName;
-import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.UnexpectedTypeException;
 import jakarta.validation.Valid;
-import jakarta.validation.metadata.ConstraintDescriptor;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
-import org.mockito.Mockito;
 
 import java.util.*;
 
@@ -29,6 +27,13 @@ public class ErrorTestingApi {
     @Path("/unknownUser")
     public TestMessage testUnknownUserException() {
         throw new UserUnknownException("Test-API call - unknown user");
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/userCreationProblem")
+    public TestMessage testUserCreationException() {
+        throw new UserCreationException("Test-API call - user creation");
     }
 
     @GET

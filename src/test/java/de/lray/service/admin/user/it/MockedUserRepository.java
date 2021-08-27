@@ -1,10 +1,9 @@
 package de.lray.service.admin.user.it;
 
 import de.lray.service.admin.ScimTestMessageFactory;
-import de.lray.service.admin.user.UserAlreadyExistsException;
+import de.lray.service.admin.user.exception.UserAlreadyExistsException;
 import de.lray.service.admin.user.persistence.UserRepository;
 import de.lray.service.admin.user.UserSearchCriteria;
-import de.lray.service.admin.user.UserUnknownException;
 import de.lray.service.admin.user.dto.UserAdd;
 import de.lray.service.admin.user.dto.UserPatch;
 import de.lray.service.admin.user.dto.UserResource;
@@ -12,7 +11,6 @@ import de.lray.service.admin.user.dto.UserResultItem;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Default;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 

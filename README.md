@@ -70,6 +70,8 @@ The main [user-entity](https://github.com/l-ray/user-mgmnt/blob/master/src/main/
 A [credential-entity](https://github.com/l-ray/user-mgmnt/blob/master/src/main/java/de/lray/service/admin/user/persistence/entities/Credentials.java), used during the login-process, holds a foreign key to the user-entity. By this, during the login process no direct access to the concrete user-entity is needed.
 The user-entity holds a foreign key to the [contact-entity](https://github.com/l-ray/user-mgmnt/blob/master/src/main/java/de/lray/service/admin/user/persistence/entities/Contact.java). By separating user and contact, potential policies of persisting system data and personal data separately are (hopefully) met. 
 
+### Password persistence
+For the sake of this example, the service persists the user password's hash and salt only. It offers a method to check a password for correctness, without giving a way to reproduce the original password.
 
 ### Endpoints
 The endpoint design is in alignment with [Okta's SCIM implementation](https://developer.okta.com/docs/reference/scim/scim-20/). Creating an Oka Dev account and testing towards this service is expected to be successful.

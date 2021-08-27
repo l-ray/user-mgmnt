@@ -1,7 +1,7 @@
 package de.lray.service.admin.providerconfig.it;
 
 import de.lray.service.JaxrsActivator;
-import de.lray.service.admin.common.Error;
+import de.lray.service.admin.common.dto.Error;
 import de.lray.service.admin.providerconfig.ServiceProviderConfigResource;
 import de.lray.service.admin.providerconfig.dto.ServiceProviderConfig;
 import de.lray.service.admin.providerconfig.endpoint.ServiceProviderConfigApi;

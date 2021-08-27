@@ -1,4 +1,4 @@
-package de.lray.service.admin.common.it;
+package de.lray.service.admin.common.dto.it;
 
 public class TestMessage {
     public String message = null;

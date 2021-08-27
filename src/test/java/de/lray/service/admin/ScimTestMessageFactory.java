@@ -22,7 +22,7 @@ public abstract class ScimTestMessageFactory {
     result.userName = "bjensen@example.com";
     result.active = true;
 
-    result.setPassword("secret");
+    result.setPassword("aSecr€t1");
 
     result.name = new UserName();
     result.name.middleName = "the";

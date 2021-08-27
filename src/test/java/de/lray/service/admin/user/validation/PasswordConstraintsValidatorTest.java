@@ -16,13 +16,13 @@ class PasswordConstraintsValidatorTest {
     private final FullConstrainDto target = new FullConstrainDto();
 
     @Test
-    public void whenPasswordNull_thenValid() throws Exception {
+    void whenPasswordNull_thenValid() throws Exception {
         whenSecretNullOrValid_thenValid(null);
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"k@rmA-pa$$w0r|)"})
-    public void whenSecretNullOrValid_thenValid(String secret) throws Exception {
+    void whenSecretNullOrValid_thenValid(String secret) throws Exception {
         // Given
         target.secret = secret;
         // When
@@ -34,7 +34,7 @@ class PasswordConstraintsValidatorTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"testPasswort", "12345", "test12345", "!@#$%1324"})
-    public void whenLetterOnly_thenFail(String secret) throws Exception {
+    void whenLetterOnly_thenFail(String secret) throws Exception {
         // Given
         target.secret = secret;
         // When
@@ -47,7 +47,7 @@ class PasswordConstraintsValidatorTest {
     }
 
     @Test
-    public void whenDigitConstrainsReduced_thenValid() throws Exception {
+    void whenDigitConstrainsReduced_thenValid() throws Exception {
         // Given
         var reducedTarget = new NoDigitConstrainDto();
         reducedTarget.secret = "!ABcde";
@@ -59,7 +59,7 @@ class PasswordConstraintsValidatorTest {
     }
 
     @Test
-    public void whenDigitConstrainsReduced_failOnOtherConstraintViolation() throws Exception {
+    void whenDigitConstrainsReduced_failOnOtherConstraintViolation() throws Exception {
         // Given
         var reducedTarget = new NoDigitConstrainDto();
         reducedTarget.secret = "!!!!!!!!";
@@ -73,7 +73,7 @@ class PasswordConstraintsValidatorTest {
     }
 
     @Test
-    public void whenSpecialCharConstrainsReduced_thenValid() throws Exception {
+    void whenSpecialCharConstrainsReduced_thenValid() throws Exception {
         // Given
         var reducedTarget = new NoSpecialCharConstrainDto();
         reducedTarget.secret = "1ABcde";
@@ -85,7 +85,7 @@ class PasswordConstraintsValidatorTest {
     }
 
     @Test
-    public void whenSpecialCharConstrainsReduced_failOnOtherConstraintViolation() throws Exception {
+    void whenSpecialCharConstrainsReduced_failOnOtherConstraintViolation() throws Exception {
         // Given
         var reducedTarget = new NoDigitConstrainDto();
         reducedTarget.secret = "abcdefghijkl";
@@ -105,17 +105,17 @@ class PasswordConstraintsValidatorTest {
                 .isEmpty();
     }
 
-    public static class FullConstrainDto {
+    static class FullConstrainDto {
         @PasswordConstraints(message = "Password not compliant")
         public String secret;
     }
 
-    public static class NoDigitConstrainDto {
+    static class NoDigitConstrainDto {
         @PasswordConstraints(message = "Password not compliant", containsDigits = false)
         public String secret;
     }
 
-    public static class NoSpecialCharConstrainDto {
+    static class NoSpecialCharConstrainDto {
         @PasswordConstraints(message = "Password not compliant", containsSpecialChar = false)
         public String secret;
     }

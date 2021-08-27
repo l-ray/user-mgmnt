@@ -1,20 +1,16 @@
-package de.lray.service.admin.common.it;
+package de.lray.service.admin.common.dto.it;
 
 import de.lray.service.JaxrsActivator;
-import de.lray.service.admin.common.Error;
-import de.lray.service.admin.user.UserAlreadyExistsException;
-import de.lray.service.admin.user.UserUnknownException;
+import de.lray.service.admin.common.dto.Error;
+import de.lray.service.admin.user.endpoint.*;
+import de.lray.service.admin.user.exception.UserAlreadyExistsException;
+import de.lray.service.admin.user.exception.UserCreationException;
+import de.lray.service.admin.user.exception.UserUnknownException;
 import de.lray.service.admin.user.dto.UserName;
-import de.lray.service.admin.user.endpoint.ConstraintViolationExceptionMapper;
-import de.lray.service.admin.user.endpoint.UserAlreadyExistsExceptionMapper;
-import de.lray.service.admin.user.endpoint.UserUnknownExceptionMapper;
-import de.lray.service.admin.user.endpoint.ValidationExceptionMapper;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import org.apache.http.HttpEntity;
-import org.apache.http.util.EntityUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit5.ArquillianExtension;
@@ -44,9 +40,10 @@ public class ExceptionMapperTest {
     public static WebArchive createDeployment() {
         return ShrinkWrap.create(WebArchive.class)
                 .addClasses(UserName.class, TestMessage.class)
-                .addClasses(UserAlreadyExistsException.class, UserUnknownException.class)
+                .addClasses(UserAlreadyExistsException.class, UserUnknownException.class, UserCreationException.class)
                 .addClasses(UserAlreadyExistsExceptionMapper.class, UserUnknownExceptionMapper.class, Error.class,
-                        ConstraintViolationExceptionMapper.class, ValidationExceptionMapper.class)
+                        ConstraintViolationExceptionMapper.class, ValidationExceptionMapper.class,
+                        UserCreationExceptionMapper.class)
                 .addClasses(ErrorTestingApi.class, JaxrsActivator.class);
     }
 
@@ -114,6 +111,24 @@ public class ExceptionMapperTest {
             assertThat(response.getStatus()).isEqualTo(404);
         }
     }
+
+    @Test
+    @DisplayName("Should return User Creation Error.")
+    void should_return_user_creation_error() throws MalformedURLException {
+        LOGGER.info(" client: " + client + ", baseURL: " + base);
+        final var userTarget = this.client.target(new URL(this.base, "api/errorTest/userCreationProblem").toExternalForm());
+        try (final Response response = userTarget.request()
+                .accept(MediaType.APPLICATION_JSON_TYPE)
+                .get()) {
+
+            var responseEntity = response.readEntity(Error.class);
+            assertThat(responseEntity.detail).contains("user creation");
+            assertThat(responseEntity.status).isEqualTo(400);
+            assertThat(responseEntity.schemas).hasSize(1).first().asString().contains("scim");
+            assertThat(response.getStatus()).isEqualTo(400);
+        }
+    }
+
 
     @Test
     @DisplayName("Should return already exist User Error.")

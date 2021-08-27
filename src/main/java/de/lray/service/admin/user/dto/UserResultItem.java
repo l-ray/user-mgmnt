@@ -1,6 +1,6 @@
 package de.lray.service.admin.user.dto;
 
-import de.lray.service.admin.common.Meta;
+import de.lray.service.admin.common.dto.Meta;
 import jakarta.validation.constraints.NotEmpty;
 
 import java.util.List;

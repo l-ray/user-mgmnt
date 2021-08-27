@@ -2,12 +2,15 @@ package de.lray.service.admin.user.it;
 
 import de.lray.service.admin.ScimTestMessageFactory;
 import de.lray.service.admin.providerconfig.ServiceProviderConfigResource;
-import de.lray.service.admin.common.Meta;
-import de.lray.service.admin.common.Error;
+import de.lray.service.admin.common.dto.Meta;
+import de.lray.service.admin.common.dto.Error;
 import de.lray.service.admin.user.*;
+import de.lray.service.admin.user.authentication.SimplePBKDF2Hasher;
 import de.lray.service.admin.user.dto.*;
 import de.lray.service.admin.user.endpoint.*;
 import de.lray.service.JaxrsActivator;
+import de.lray.service.admin.user.exception.UserAlreadyExistsException;
+import de.lray.service.admin.user.exception.UserUnknownException;
 import de.lray.service.admin.user.operation.UserPatchOpAction;
 import de.lray.service.admin.user.persistence.UserRepository;
 import jakarta.ws.rs.client.Client;
@@ -48,7 +51,8 @@ public class UserAdminResourceTest {
                 .addClasses(UserPatchOpAction.class)
                 .addClass(UserSearchCriteria.class)
                 .addClasses(UserRepository.class, MockedUserRepository.class, ScimTestMessageFactory.class)
-                .addClasses(UserAlreadyExistsException.class, UserUnknownException.class)
+                .addPackage(UserAlreadyExistsException.class.getPackage())
+                .addClass(SimplePBKDF2Hasher.class)
                 .addClasses(UserAlreadyExistsExceptionMapper.class, UserUnknownExceptionMapper.class, Error.class, ConstraintViolationExceptionMapper.class)
                 .addClasses(UserAdminApi.class, UserAdminResource.class, JaxrsActivator.class);
     }
@@ -105,11 +109,11 @@ public class UserAdminResourceTest {
         final var userTarget = this.client.target(new URL(this.base, "api/scim/v2/Users").toExternalForm());
 
         var payload = ScimTestMessageFactory.createUserAdd();
-        payload.setPassword("123");
 
         try (final Response response = userTarget.request(ServiceProviderConfigResource.SCIM_MEDIA_TYPE)
                 .accept(ServiceProviderConfigResource.SCIM_MEDIA_TYPE)
                 .post(json(payload))) {
+
             assertThat(response.getStatus()).isEqualTo(409);
             var responseEntity = response.readEntity(Error.class);
             assertThat(responseEntity.detail).contains("already exists");

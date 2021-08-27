@@ -1,7 +1,6 @@
 package de.lray.service.admin.user.dto;
 
 import de.lray.service.admin.user.validation.PasswordConstraints;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 
 import java.util.StringJoiner;

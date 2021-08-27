@@ -1,5 +1,6 @@
-package de.lray.service.admin.common;
+package de.lray.service.admin.common.dto;
 
+import de.lray.service.admin.common.dto.Meta;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -10,7 +11,7 @@ class MetaTest {
     @Test
     void handles_primitive_issues() {
         Assertions.assertThat(new Meta()).isEqualTo(new Meta());
-        Assertions.assertThat(new Meta().equals(null)).isFalse();
+        Assertions.assertThat(new Meta()).isNotEqualTo(null);
     }
 
     @Test

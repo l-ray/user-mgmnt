@@ -1,8 +1,7 @@
-package de.lray.service.admin.common;
+package de.lray.service.admin.common.dto;
 
 import org.apache.http.HttpStatus;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 

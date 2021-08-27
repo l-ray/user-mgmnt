@@ -56,18 +56,41 @@ class UserPatchFactoryTest {
     @Test
     void whenPasswordPatchOpValue_thenSet() {
         // Given
+        var newPw = "Pa$$w0r|)";
         var readOnlyUser = Mockito.mock(User.class);
         var credentials = Mockito.mock(Credentials.class);
+        Mockito.when(credentials.checkPassword(newPw)).thenReturn(false);
         Mockito.when(readOnlyUser.getCredentials()).thenReturn(credentials);
 
         var userPatchOp = new UserPatchOp();
         var patchOpVal = new UserPatchOpValues();
-        patchOpVal.password = "Pa$$w0r|)";
+        patchOpVal.password = newPw;
         userPatchOp.op = UserPatchOpAction.replace;
         userPatchOp.value = patchOpVal;
         // When
         new UserPatchFactory().apply(readOnlyUser, List.of(userPatchOp));
         // Then
-        //Mockito.verify(credentials, Mockito.times(1)).setPassword(false);
+        Mockito.verify(credentials, Mockito.times(1)).setPassword(newPw);
+        Mockito.verify(credentials, Mockito.times(1)).checkPassword(newPw);
+    }
+
+    @Test
+    void whenPasswordPatchOpValueEqualExistingPw_thenFail() {
+        // Given
+        var newPw = "Pa$$w0r|)";
+        var readOnlyUser = Mockito.mock(User.class);
+        var credentials = Mockito.mock(Credentials.class);
+        Mockito.when(credentials.checkPassword(newPw)).thenReturn(true);
+        Mockito.when(readOnlyUser.getCredentials()).thenReturn(credentials);
+
+        var userPatchOp = new UserPatchOp();
+        var patchOpVal = new UserPatchOpValues();
+        patchOpVal.password = newPw;
+        userPatchOp.op = UserPatchOpAction.replace;
+        userPatchOp.value = patchOpVal;
+        var underTest = new UserPatchFactory();
+        // When / Then
+        Assertions.assertThatThrownBy(() -> underTest.apply(readOnlyUser, List.of(userPatchOp)))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 }

@@ -2,10 +2,12 @@ package de.lray.service.admin.user.persistence.it;
 
 import de.lray.service.admin.Resources;
 import de.lray.service.admin.ScimTestMessageFactory;
-import de.lray.service.admin.common.Meta;
-import de.lray.service.admin.user.UserAlreadyExistsException;
+import de.lray.service.admin.common.dto.Meta;
+import de.lray.service.admin.user.authentication.SimplePBKDF2Hasher;
+import de.lray.service.admin.user.exception.UserAlreadyExistsException;
+import de.lray.service.admin.user.exception.UserCreationException;
 import de.lray.service.admin.user.UserSearchCriteria;
-import de.lray.service.admin.user.UserUnknownException;
+import de.lray.service.admin.user.exception.UserUnknownException;
 import de.lray.service.admin.user.dto.*;
 import de.lray.service.admin.user.operation.UserPatchFactory;
 import de.lray.service.admin.user.operation.UserPatchOpAction;
@@ -51,12 +53,14 @@ class ConcreteUserRepositoryTest {
                 .addPackage(User.class.getPackage())
                 .addPackage(UserResource.class.getPackage())
                 .addPackage(Meta.class.getPackage())
-                .addClasses(UserSearchCriteria.class, UserAlreadyExistsException.class, UserUnknownException.class)
+                .addClasses(UserSearchCriteria.class)
+                .addPackage(UserAlreadyExistsException.class.getPackage())
                 .addPackage(UserPatchFactory.class.getPackage())
                 .addClasses(UserToUserResultItemMapper.class, UserToUserResourceMapper.class, UserAddToUserMapper.class)
                 .addPackage(ConcreteUserRepository.class.getPackage())
                 .addClass(Resources.class)
                 .addClass(ScimTestMessageFactory.class)
+                .addClass(SimplePBKDF2Hasher.class)
                 .addAsResource("test-persistence.xml", "META-INF/persistence.xml")
                 .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
@@ -306,7 +310,7 @@ class ConcreteUserRepositoryTest {
         var userDto = ScimTestMessageFactory.createUserAdd();
         userDto.id = existingUserPublicId;
         userDto.active = false;
-        userDto.setPassword( "xxx");
+        userDto.setPassword("xxx");
 
         // When
         var result = underTest.updateUser(
@@ -340,6 +344,39 @@ class ConcreteUserRepositoryTest {
         em.refresh(dbUser);
         em.refresh(dbUser.getCredentials());
         assertTrue(dbUser.getCredentials().isActive());
+    }
+
+    @Test
+    void whenUserPasswordChange_thenDo() {
+        // Given
+        var aPassword = "$tr0n9Passwor|)";
+        var userPatch = new UserPatch();
+        var userPatchOp = new UserPatchOp();
+        var patchOpVal = new UserPatchOpValues();
+        patchOpVal.password = aPassword;
+        userPatchOp.op = UserPatchOpAction.replace;
+        userPatchOp.value = patchOpVal;
+        userPatch.Operations = Arrays.asList(userPatchOp);
+
+        // When
+        var result = underTest.patchUser(existingUserPublicId, userPatch);
+
+        // Then
+        var dbUser = getDbUserByPublicId(existingUserPublicId);
+        var salt = (String) em.createQuery("select c.salt from Credentials c where c.id = :Id")
+                .setParameter("Id", dbUser.getCredentials().getId())
+                .getSingleResult();
+        assertNotNull(salt);
+
+        var password = (String) em.createQuery("select c.password from Credentials c where c.id = :Id")
+                .setParameter("Id", dbUser.getCredentials().getId())
+                .getSingleResult();
+        assertNotNull(password);
+
+
+        em.refresh(dbUser);
+        em.refresh(dbUser.getCredentials());
+        assertTrue(dbUser.getCredentials().checkPassword(aPassword));
     }
 
     private User getDbUserByPublicId(String publicId) {

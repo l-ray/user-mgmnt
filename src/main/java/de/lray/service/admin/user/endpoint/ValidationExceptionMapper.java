@@ -1,6 +1,6 @@
 package de.lray.service.admin.user.endpoint;
 
-import de.lray.service.admin.common.Error;
+import de.lray.service.admin.common.dto.Error;
 import jakarta.validation.ValidationException;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;

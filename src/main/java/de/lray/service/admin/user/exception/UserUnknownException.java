@@ -1,4 +1,4 @@
-package de.lray.service.admin.user;
+package de.lray.service.admin.user.exception;
 
 public class UserUnknownException extends IllegalArgumentException {
     public UserUnknownException(String message) {

@@ -1,5 +1,6 @@
-package de.lray.service.admin.common;
+package de.lray.service.admin.common.dto;
 
+import de.lray.service.admin.common.dto.Error;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

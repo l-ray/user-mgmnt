@@ -1,8 +1,10 @@
 package de.lray.service.admin.user;
 
 
-import de.lray.service.admin.common.Meta;
+import de.lray.service.admin.common.dto.Meta;
 import de.lray.service.admin.user.dto.*;
+import de.lray.service.admin.user.exception.UserAlreadyExistsException;
+import de.lray.service.admin.user.exception.UserUnknownException;
 import de.lray.service.admin.user.persistence.UserRepository;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.description.TextDescription;

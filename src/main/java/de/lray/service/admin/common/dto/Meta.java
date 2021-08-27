@@ -1,4 +1,4 @@
-package de.lray.service.admin.common;
+package de.lray.service.admin.common.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 

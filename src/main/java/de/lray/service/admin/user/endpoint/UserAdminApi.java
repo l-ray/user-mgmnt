@@ -6,6 +6,7 @@ import de.lray.service.admin.user.dto.UserPatch;
 import de.lray.service.admin.user.dto.UserResource;
 import de.lray.service.admin.user.dto.UserResult;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -32,7 +33,7 @@ public interface UserAdminApi {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "500", description = "Internal Server Error"),
             @ApiResponse(
-                    responseCode = "200", description = "List of users..", content = {
+                    responseCode = "200", description = "List of users.", content = {
                     @Content(
                             mediaType = ServiceProviderConfigResource.SCIM_MEDIA_TYPE,
                             array = @ArraySchema(schema = @Schema(implementation = UserResult.class))
@@ -42,7 +43,19 @@ public interface UserAdminApi {
     })
     @GET
     @Produces(ServiceProviderConfigResource.SCIM_MEDIA_TYPE)
-    UserResult getUsers(@QueryParam("filter") String filter, @QueryParam("startIndex") Integer startIndex, @QueryParam("count") Integer count) throws ParseException;
+    UserResult getUsers(
+            @QueryParam("filter")
+            @Parameter(required = false, description = "Allows filtering " +
+                    "for user-name using ```filter=userName eq \"emustermann\"```  or " +
+                    "last modified after date as in ```filter=lastModified gt \"2021-11-11T04:42:34Z\"```.")
+                    String filter,
+            @QueryParam("startIndex")
+            @Parameter(required = false, description = "Used for pagination, index of first result to be included.")
+                    Integer startIndex,
+            @QueryParam("count")
+            @Parameter(required = false, description = "Max number of results.")
+                    Integer count
+    ) throws ParseException;
 
     @Operation(summary = "Select single user",
             description = "Returns user with given id, http error elsewise.")
@@ -65,7 +78,7 @@ public interface UserAdminApi {
     @Path("/{userId}")
     UserResource getUser(@PathParam("userId") String userId);
 
-    @Operation(summary = "Creates new user",
+    @Operation(summary = "Create new user",
             description = "In case of valid payload and if successful create the given user.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "500", description = "Internal Server Error"),
@@ -86,7 +99,7 @@ public interface UserAdminApi {
     @Produces(ServiceProviderConfigResource.SCIM_MEDIA_TYPE)
     UserResource addUser(@Valid UserAdd payload);
 
-    @Operation(summary = "Updates existing user",
+    @Operation(summary = "Update existing user",
             description = "In case of valid payload and if successful persisted, updates the given user." +
                     "For changing a users password or active/deactivate, the patch endpoint is to" +
                     "be used instead.")

@@ -13,7 +13,10 @@ import jakarta.ws.rs.core.Application;
         info = @Info(
                 title = "User Management API",
                 version = "0.1",
-                description = "This is the is a template for a service built with Micronaut",
+                description = "This is an exercise on how to create a user-registration possibility. \n" +
+                              "As the frontend interface isn't developed (yet), this exercise follows " +
+                               "the standard of SCIM 2.0 to allow for compatibility with existing " +
+                               "products/service, e.g. Okta.",
                 contact = @Contact(
                         email = "info@l-ray.de"
                 )

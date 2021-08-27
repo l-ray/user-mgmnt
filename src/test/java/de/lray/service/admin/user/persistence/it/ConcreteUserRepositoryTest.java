@@ -51,7 +51,7 @@ class ConcreteUserRepositoryTest {
                 .addPackage(User.class.getPackage())
                 .addPackage(UserResource.class.getPackage())
                 .addPackage(Meta.class.getPackage())
-                .addPackage(UserSearchCriteria.class.getPackage())
+                .addClasses(UserSearchCriteria.class, UserAlreadyExistsException.class, UserUnknownException.class)
                 .addPackage(UserPatchFactory.class.getPackage())
                 .addClasses(UserToUserResultItemMapper.class, UserToUserResourceMapper.class, UserAddToUserMapper.class)
                 .addPackage(ConcreteUserRepository.class.getPackage())

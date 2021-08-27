@@ -4,6 +4,7 @@ import de.lray.service.JaxrsActivator;
 import de.lray.service.admin.common.Error;
 import de.lray.service.admin.providerconfig.ServiceProviderConfigResource;
 import de.lray.service.admin.providerconfig.dto.ServiceProviderConfig;
+import de.lray.service.admin.providerconfig.endpoint.ServiceProviderConfigApi;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.core.Response;
@@ -35,6 +36,7 @@ public class ServiceProviderConfigResourceTest {
         return ShrinkWrap.create(WebArchive.class)
                 .addClasses(ServiceProviderConfig.class)
                 .addClasses(Error.class)
+                .addClasses(ServiceProviderConfigApi.class)
                 .addClasses(ServiceProviderConfigResource.class, JaxrsActivator.class);
     }
 

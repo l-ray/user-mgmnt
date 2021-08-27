@@ -1,13 +1,16 @@
 package de.lray.service.admin.user.dto;
 
+import de.lray.service.admin.user.validation.PasswordConstraints;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 
 import java.util.StringJoiner;
 
 @SuppressWarnings("java:S1104")
 public class UserAdd extends UserResource {
 
-  @NotEmpty
+  @Size(min=8)
+  @PasswordConstraints(message = "Password is not compliant.")
   protected String password = null;
 
   public void setPassword(String password) {

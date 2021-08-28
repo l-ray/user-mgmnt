@@ -10,9 +10,10 @@ import java.util.function.Function;
 
 class UserResultItemTest {
     @Test
+    @SuppressWarnings("java:S5838")
     void handles_primitive_issues() {
         Assertions.assertThat(new UserResultItem()).isEqualTo(new UserResultItem());
-        Assertions.assertThat(new UserResultItem().equals(null)).isFalse();
+        Assertions.assertThat(new UserResultItem()).isNotEqualTo(null);
     }
 
     @Test

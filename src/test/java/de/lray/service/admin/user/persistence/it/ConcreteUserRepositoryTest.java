@@ -86,7 +86,7 @@ class ConcreteUserRepositoryTest {
         clearData();
         insertData();
         startTransaction();
-        underTest = new ConcreteUserRepository(em, utx, new UserPatchFactory());
+        underTest = new ConcreteUserRepository(em, new UserPatchFactory());
     }
 
     private void clearData() throws Exception {

@@ -9,9 +9,10 @@ import java.util.function.Function;
 class UserPhoneTest {
 
     @Test
+    @SuppressWarnings("java:S5838")
     void handles_primitive_issues() {
         Assertions.assertThat(new UserPhone()).isEqualTo(new UserPhone());
-        Assertions.assertThat(new UserPhone().equals(null)).isFalse();
+        Assertions.assertThat(new UserPhone()).isNotEqualTo(null);
     }
 
     @Test

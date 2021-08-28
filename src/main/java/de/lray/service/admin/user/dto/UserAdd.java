@@ -3,6 +3,7 @@ package de.lray.service.admin.user.dto;
 import de.lray.service.admin.user.validation.PasswordConstraints;
 import jakarta.validation.constraints.Size;
 
+import java.util.Objects;
 import java.util.StringJoiner;
 
 @SuppressWarnings("java:S1104")
@@ -34,5 +35,19 @@ public class UserAdd extends UserResource {
             .add("roles=" + roles)
             .add("meta=" + meta)
             .toString();
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    if (!super.equals(o)) return false;
+    UserAdd userAdd = (UserAdd) o;
+    return Objects.equals(password, userAdd.password);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(super.hashCode(), password);
   }
 }

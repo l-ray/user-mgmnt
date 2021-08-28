@@ -7,7 +7,7 @@ import java.util.UUID;
 
 @MappedSuperclass
 @Table(indexes = @Index(name = "IDX_USER_PUBLIC_ID", columnList = "publicId"))
-abstract public class Keyable {
+public abstract class Keyable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

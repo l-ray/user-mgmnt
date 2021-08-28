@@ -34,8 +34,6 @@ public class ConcreteUserRepository implements UserRepository {
 
     private final EntityManager entityManager;
 
-    private final UserTransaction utx;
-
     private final UserPatchFactory patchFactory;
 
     private final TypedQuery<User> queryFindUserByPublicId;
@@ -43,12 +41,10 @@ public class ConcreteUserRepository implements UserRepository {
     @Inject
     public ConcreteUserRepository(
             EntityManager entityManager,
-            UserTransaction utx,
             UserPatchFactory patchFactory
     ) {
         this.patchFactory = patchFactory;
         this.entityManager = entityManager;
-        this.utx = utx;
 
         queryFindUserByPublicId = entityManager.createQuery(
                 FIND_USER_BY_PUBLIC_ID_SQL, User.class

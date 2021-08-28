@@ -89,8 +89,9 @@ class UserPatchFactoryTest {
         userPatchOp.op = UserPatchOpAction.replace;
         userPatchOp.value = patchOpVal;
         var underTest = new UserPatchFactory();
+        var operations = List.of(userPatchOp);
         // When / Then
-        Assertions.assertThatThrownBy(() -> underTest.apply(readOnlyUser, List.of(userPatchOp)))
+        Assertions.assertThatThrownBy(() -> underTest.apply(readOnlyUser, operations))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }

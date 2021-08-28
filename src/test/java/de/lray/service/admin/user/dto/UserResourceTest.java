@@ -10,6 +10,7 @@ import java.util.function.Function;
 class UserResourceTest {
 
     @Test
+    @SuppressWarnings("java:S5838")
     void handles_primitive_issues() {
         Assertions.assertThat(new UserResource()).isEqualTo(new UserResource());
         Assertions.assertThat(new UserResource()).isNotEqualTo(null);

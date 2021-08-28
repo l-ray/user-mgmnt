@@ -9,9 +9,10 @@ import java.util.function.Function;
 class UserNameTest {
 
     @Test
+    @SuppressWarnings("java:S5838")
     void handles_primitive_issues() {
         Assertions.assertThat(new UserName()).isEqualTo(new UserName());
-        Assertions.assertThat(new UserName().equals(null)).isFalse();
+        Assertions.assertThat(new UserName()).isNotEqualTo(null);
     }
 
     @Test

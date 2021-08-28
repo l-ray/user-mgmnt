@@ -190,8 +190,7 @@ class UserAdminResourceTest {
         // When
         var result = new UserAdminResource(repo).updateUser(userId, mock(UserAdd.class));
         // Then
-        Assertions.assertThat(result).isInstanceOf(UserResource.class);
-        Assertions.assertThat(result)
+        Assertions.assertThat(result).isInstanceOf(UserResource.class)
                 .hasFieldOrPropertyWithValue("id", userId);
     }
 

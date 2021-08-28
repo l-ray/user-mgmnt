@@ -5,19 +5,14 @@ import de.lray.service.admin.user.operation.UserPatchOpAction;
 
 import java.util.Arrays;
 
-public abstract class ScimTestMessageFactory {
+public class ScimTestMessageFactory {
 
   public static final String EXAMPLE_ID = "d0dd58e43ded4293a61a8760fcba0458";
 
   private ScimTestMessageFactory() { }
 
   public static UserAdd createUserAdd() {
-    var result = new UserAdd(){
-      // this way, produced payloads in tests reflect the password set.
-      public String getPassword() {
-        return this.password;
-      }
-    };
+    var result = new UserAddWithPasswordGetter();
     result.id = EXAMPLE_ID;
     result.userName = "bjensen@example.com";
     result.active = true;
@@ -64,4 +59,12 @@ public abstract class ScimTestMessageFactory {
     result.Operations  = Arrays.asList(pwOps);
     return result;
   }
+
+  public static class UserAddWithPasswordGetter extends UserAdd {
+    // this way, produced payloads in tests reflect the password set.
+    public String getPassword() {
+      return this.password;
+    }
+  }
 }
+

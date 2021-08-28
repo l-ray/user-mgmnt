@@ -1,6 +1,5 @@
-package de.lray.service.admin.user.persistence.mapper;
+package de.lray.service.admin.user.dto;
 
-import de.lray.service.admin.user.dto.UserAdd;
 import de.lray.service.admin.user.persistence.entities.Contact;
 import de.lray.service.admin.user.persistence.entities.Credentials;
 import de.lray.service.admin.user.persistence.entities.User;
@@ -21,7 +20,7 @@ public abstract class UserAddToUserMapper {
         if (hasCredentialRelevantDate(payload)) {
             Credentials creds = createCredentialsForUser(newUser);
             creds.setActive(payload.active);
-            //creds.setPassword(payload.password);
+            creds.setPassword(payload.password);
         }
         return map(payload, newUser);
     }

@@ -1,10 +1,6 @@
-package de.lray.service.admin.user.persistence.mapper;
+package de.lray.service.admin.user.dto;
 
 import de.lray.service.admin.ScimTestMessageFactory;
-import de.lray.service.admin.user.dto.UserAdd;
-import de.lray.service.admin.user.dto.UserEmail;
-import de.lray.service.admin.user.dto.UserName;
-import de.lray.service.admin.user.dto.UserPhone;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -29,6 +25,10 @@ class UserAddToUserMapperTest {
         Assertions.assertThat(result.getCredentials())
                 .hasFieldOrPropertyWithValue("username",aUser.userName)
                 .hasFieldOrPropertyWithValue("active",aUser.active);
+        Assertions.assertThat(
+                result.getCredentials().checkPassword(
+                        ((ScimTestMessageFactory.UserAddWithPasswordGetter)aUser).getPassword())
+        ).isTrue();
     }
 
     @Test

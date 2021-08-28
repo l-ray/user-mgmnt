@@ -9,7 +9,7 @@ import de.lray.service.admin.user.dto.UserResource;
 import de.lray.service.admin.user.dto.UserResultItem;
 import de.lray.service.admin.user.operation.UserPatchFactory;
 import de.lray.service.admin.user.persistence.entities.User;
-import de.lray.service.admin.user.persistence.mapper.UserAddToUserMapper;
+import de.lray.service.admin.user.dto.UserAddToUserMapper;
 import de.lray.service.admin.user.persistence.mapper.UserToUserResourceMapper;
 import de.lray.service.admin.user.persistence.mapper.UserToUserResultItemMapper;
 import jakarta.enterprise.context.RequestScoped;

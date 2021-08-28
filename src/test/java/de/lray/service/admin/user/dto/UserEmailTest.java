@@ -1,45 +1,30 @@
 package de.lray.service.admin.user.dto;
 
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.Test;
+import org.apache.commons.lang3.tuple.Pair;
+import org.junit.jupiter.params.provider.Arguments;
 
-import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
-class UserEmailTest {
+class UserEmailTest extends AbstractDtoTest<UserEmail> {
 
-    @Test
-    @SuppressWarnings("java:S5838")
-    void handles_primitive_issues() {
-        Assertions.assertThat(new UserEmail()).isEqualTo(new UserEmail());
-        Assertions.assertThat(new UserEmail()).isNotEqualTo(null);
+    @Override
+    protected UserEmail newInstance() {
+        return new UserEmail();
     }
 
-    @Test
-    void when_similar_then_equal() {
-        Assertions.assertThat(fillDefaults(new UserEmail()))
-                .isEqualTo(fillDefaults(new UserEmail()));
+    static Stream<Arguments> potentialChangeActions() {
+        return Stream.of(
+                Arguments.of(Pair.<String, Function<UserEmail, Object>>of(
+                        "differing type", (changed) -> changed.type = "uk")),
+                Arguments.of(Pair.<String, Function<UserEmail, Object>>of(
+                        "differing value", (changed) -> changed.value = "l@tzho.se")),
+                Arguments.of(Pair.<String, Function<UserEmail, Object>>of(
+                        "differing primary", (changed) -> changed.primary = false))
+        );
     }
 
-    @Test
-    void when_differing_then_unequal() {
-            var changes = Map.<String, Function<UserEmail, Object>>of(
-                    "differing type", (changed) -> changed.type = "uk",
-                    "differing value", (changed) -> changed.value = "l@tzho.se",
-                    "differing primary", (changed) -> changed.primary = false
-            );
-
-            for (Map.Entry<String, Function<UserEmail, Object>> change : changes.entrySet()) {
-                var changed = fillDefaults(new UserEmail());
-                var action = change.getValue();
-                action.apply(changed);
-                Assertions.assertThat(fillDefaults(new UserEmail()))
-                        .as(change.getKey())
-                        .isNotEqualTo(changed);
-            }
-        }
-
-    private UserEmail fillDefaults(UserEmail item) {
+    protected UserEmail fillDefaults(UserEmail item) {
         item.type = "test";
         item.display = "de";
         item.value = "m@tro.se";

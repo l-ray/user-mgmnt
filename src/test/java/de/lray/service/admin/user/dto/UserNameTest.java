@@ -1,45 +1,30 @@
 package de.lray.service.admin.user.dto;
 
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.Test;
+import org.apache.commons.lang3.tuple.Pair;
+import org.junit.jupiter.params.provider.Arguments;
 
-import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
-class UserNameTest {
+class UserNameTest extends AbstractDtoTest<UserName> {
 
-    @Test
-    @SuppressWarnings("java:S5838")
-    void handles_primitive_issues() {
-        Assertions.assertThat(new UserName()).isEqualTo(new UserName());
-        Assertions.assertThat(new UserName()).isNotEqualTo(null);
+    @Override
+    protected UserName newInstance() {
+        return new UserName();
     }
 
-    @Test
-    void when_similar_then_equal() {
-        Assertions.assertThat(fillDefaults(new UserName()))
-                .isEqualTo(fillDefaults(new UserName()));
+    static Stream<Arguments> potentialChangeActions() {
+        return Stream.of(
+                Arguments.of(Pair.<String, Function<UserName, Object>>of(
+                        "differing first", (changed) -> changed.givenName = "uk")),
+                Arguments.of(Pair.<String, Function<UserName, Object>>of(
+                        "differing middle", (changed) -> changed.middleName = "11880")),
+                Arguments.of(Pair.<String, Function<UserName, Object>>of(
+                        "differing given name", (changed) -> changed.familyName = "11880"))
+        );
     }
 
-    @Test
-    void when_differing_then_unequal() {
-            var changes = Map.<String, Function<UserName, Object>>of(
-                    "differing first", (changed) -> changed.givenName = "uk",
-                    "differing middle", (changed) -> changed.middleName = "11880",
-                    "differing given name", (changed) -> changed.familyName = "11880"
-            );
-
-            for (Map.Entry<String, Function<UserName, Object>> change : changes.entrySet()) {
-                var changed = fillDefaults(new UserName());
-                var action = change.getValue();
-                action.apply(changed);
-                Assertions.assertThat(fillDefaults(new UserName()))
-                        .as(change.getKey())
-                        .isNotEqualTo(changed);
-            }
-        }
-
-    private UserName fillDefaults(UserName item) {
+    protected UserName fillDefaults(UserName item) {
         item.givenName = "test";
         item.middleName = "test";
         item.familyName = "m@tro.se";

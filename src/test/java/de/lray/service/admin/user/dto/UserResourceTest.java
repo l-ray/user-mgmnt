@@ -1,48 +1,39 @@
 package de.lray.service.admin.user.dto;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.provider.Arguments;
 
-import java.util.Collections;
-import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
-class UserResourceTest {
+class UserResourceTest extends AbstractDtoTest<UserResource> {
+
+    static Stream<Arguments> potentialChangeActions() {
+        return Stream.of(
+                Arguments.of(Pair.<String, Function<UserResource, Object>>of(
+                        "differing language", (changed) -> changed.preferredLanguage = "uk")),
+                Arguments.of(Pair.<String, Function<UserResource, Object>>of(
+                        "differing locale", (changed) -> changed.locale = "uk")),
+                Arguments.of(Pair.<String, Function<UserResource, Object>>of(
+                        "differing displayname", (changed) -> changed.displayName = "wha")),
+                Arguments.of(Pair.<String, Function<UserResource, Object>>of(
+                        "differing super", (changed) -> changed.active = false))
+        );
+    }
 
     @Test
-    @SuppressWarnings("java:S5838")
-    void handles_primitive_issues() {
-        Assertions.assertThat(new UserResource()).isEqualTo(new UserResource());
-        Assertions.assertThat(new UserResource()).isNotEqualTo(null);
+    void handles_inheritance_issue() {
         Assertions.assertThat(new UserResource()).isNotEqualTo(new UserResultItem());
     }
 
-    @Test
-    void when_similar_then_equal() {
-        Assertions.assertThat(fillDefaults(new UserResource()))
-                .isEqualTo(fillDefaults(new UserResource()));
+    @Override
+    protected UserResource newInstance() {
+        return new UserResource();
     }
 
-    @Test
-    void when_differing_then_unequal() {
-            var changes = Map.<String, Function<UserResource, Object>>of(
-                    "differing language", (changed) -> changed.preferredLanguage = "uk",
-                    "differing locale", (changed) -> changed.locale = "uk",
-                    "differing displayname", (changed) -> changed.displayName = "wha",
-                    "differing super", (changed) -> changed.active = false
-            );
-
-            for (Map.Entry<String, Function<UserResource, Object>> change : changes.entrySet()) {
-                var changed = fillDefaults(new UserResource());
-                var action = change.getValue();
-                action.apply(changed);
-                Assertions.assertThat(fillDefaults(new UserResource()))
-                        .as(change.getKey())
-                        .isNotEqualTo(changed);
-            }
-        }
-
-    private UserResource fillDefaults(UserResource item) {
+    protected UserResource fillDefaults(UserResource item) {
         item.active = true;
         item.displayName = "test";
         item.preferredLanguage = "de";

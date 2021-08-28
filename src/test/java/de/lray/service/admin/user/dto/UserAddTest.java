@@ -1,45 +1,37 @@
 package de.lray.service.admin.user.dto;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.provider.Arguments;
 
-import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
-class UserAddTest {
+class UserAddTest extends AbstractDtoTest<UserAdd> {
+
+    @Override
+    protected UserAdd newInstance() {
+        return new UserAdd();
+    }
 
     @Test
-    @SuppressWarnings("java:S5838")
-    void handles_primitive_issues() {
-        Assertions.assertThat(new UserAdd()).isEqualTo(new UserAdd());
-        Assertions.assertThat(new UserAdd()).isNotEqualTo(null);
+    void handles_inheritance_issue() {
         Assertions.assertThat(new UserAdd()).isNotEqualTo(new UserResource());
     }
 
-    @Test
-    void when_similar_then_equal() {
-        Assertions.assertThat(fillDefaults(new UserAdd()))
-                .isEqualTo(fillDefaults(new UserAdd()));
+    static Stream<Arguments> potentialChangeActions() {
+        return Stream.<Arguments>of(
+                Arguments.of(Pair.<String, Function<UserAdd, Object>>of(
+                        "differing password", (changed) -> changed.password = "!UK12345"
+                )),
+                Arguments.of(Pair.<String, Function<UserAdd, Object>>of(
+                        "differing super", (changed) -> changed.preferredLanguage = "uk"
+                ))
+        );
     }
 
-    @Test
-    void when_differing_then_unequal() {
-            var changes = Map.<String, Function<UserAdd, Object>>of(
-                    "differing password", (changed) -> changed.password = "!UK12345",
-                    "differing super", (changed) -> changed.preferredLanguage = "uk"
-            );
-
-            for (Map.Entry<String, Function<UserAdd, Object>> change : changes.entrySet()) {
-                var changed = fillDefaults(new UserAdd());
-                var action = change.getValue();
-                action.apply(changed);
-                Assertions.assertThat(fillDefaults(new UserAdd()))
-                        .as(change.getKey())
-                        .isNotEqualTo(changed);
-            }
-        }
-
-    private UserAdd fillDefaults(UserAdd item) {
+    public UserAdd fillDefaults(UserAdd item) {
         item.password = "DE0007!";
         item.preferredLanguage = "de";
         return item;

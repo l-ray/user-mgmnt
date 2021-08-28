@@ -1,43 +1,34 @@
 package de.lray.service.admin.common.dto;
 
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.Test;
+import de.lray.service.admin.user.dto.AbstractDtoTest;
+import org.apache.commons.lang3.tuple.Pair;
+import org.junit.jupiter.params.provider.Arguments;
 
-import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
-class MetaTest {
-    @Test
-    @SuppressWarnings("java:S5838")
-    void handles_primitive_issues() {
-        Assertions.assertThat(new Meta()).isEqualTo(new Meta());
-        Assertions.assertThat(new Meta()).isNotEqualTo(null);
+class MetaTest extends AbstractDtoTest<Meta> {
+
+    @Override
+    protected Meta newInstance() {
+        return new Meta();
     }
 
-    @Test
-    void when_similar_then_equal() {
-        Assertions.assertThat(fillDefaults(new Meta()))
-                .isEqualTo(fillDefaults(new Meta()));
-    }
-
-    @Test
-    void when_differing_then_unequal() {
-        var changes = Map.<String, Function<Meta, Object>>of(
-                "differing created", (changed) -> changed.created = "anotherday",
-                "differing last modified", (changed) -> changed.lastModified = "anotherday"
+    static Stream<Arguments> potentialChangeActions() {
+        return Stream.of(
+                Arguments.of(Pair.<String, Function<Meta, Object>>of(
+                        "differing created", (changed) -> changed.created = "anotherday"
+                )),
+                Arguments.of(Pair.<String, Function<Meta, Object>>of(
+                        "differing last modified", (changed) -> changed.lastModified = "anotherday"
+                )),
+                Arguments.of(Pair.<String, Function<Meta, Object>>of(
+                        "diff last resource type", (changed) -> changed.resourceType = Meta.ResourceTypeEnum.User
+                ))
         );
-
-        for (Map.Entry<String, Function<Meta, Object>> change : changes.entrySet()) {
-            var changed = fillDefaults(new Meta());
-            var action = change.getValue();
-            action.apply(changed);
-            Assertions.assertThat(fillDefaults(new Meta()))
-                    .as(change.getKey())
-                    .isNotEqualTo(changed);
-        }
     }
 
-    private Meta fillDefaults(Meta item) {
+    protected Meta fillDefaults(Meta item) {
         item.created = "test";
         item.lastModified = "test";
         item.resourceType = Meta.ResourceTypeEnum.Group;

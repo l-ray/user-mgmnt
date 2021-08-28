@@ -1,44 +1,28 @@
 package de.lray.service.admin.user.dto;
 
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.Test;
+import org.apache.commons.lang3.tuple.Pair;
+import org.junit.jupiter.params.provider.Arguments;
 
-import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
-class UserPhoneTest {
+class UserPhoneTest extends AbstractDtoTest<UserPhone> {
 
-    @Test
-    @SuppressWarnings("java:S5838")
-    void handles_primitive_issues() {
-        Assertions.assertThat(new UserPhone()).isEqualTo(new UserPhone());
-        Assertions.assertThat(new UserPhone()).isNotEqualTo(null);
+    static Stream<Arguments> potentialChangeActions() {
+        return Stream.of(
+                Arguments.of(Pair.<String, Function<UserPhone, Object>>of(
+                        "differing type", (changed) -> changed.type = "uk")),
+                Arguments.of(Pair.<String, Function<UserPhone, Object>>of(
+                        "differing value", (changed) -> changed.value = "11880"))
+        );
     }
 
-    @Test
-    void when_similar_then_equal() {
-        Assertions.assertThat(fillDefaults(new UserPhone()))
-                .isEqualTo(fillDefaults(new UserPhone()));
+    @Override
+    protected UserPhone newInstance() {
+        return new UserPhone();
     }
 
-    @Test
-    void when_differing_then_unequal() {
-            var changes = Map.<String, Function<UserPhone, Object>>of(
-                    "differing type", (changed) -> changed.type = "uk",
-                    "differing value", (changed) -> changed.value = "11880"
-            );
-
-            for (Map.Entry<String, Function<UserPhone, Object>> change : changes.entrySet()) {
-                var changed = fillDefaults(new UserPhone());
-                var action = change.getValue();
-                action.apply(changed);
-                Assertions.assertThat(fillDefaults(new UserPhone()))
-                        .as(change.getKey())
-                        .isNotEqualTo(changed);
-            }
-        }
-
-    private UserPhone fillDefaults(UserPhone item) {
+    protected UserPhone fillDefaults(UserPhone item) {
         item.type = "test";
         item.value = "m@tro.se";
         return item;

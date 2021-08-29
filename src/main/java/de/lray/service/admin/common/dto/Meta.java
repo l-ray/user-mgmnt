@@ -1,16 +1,12 @@
 package de.lray.service.admin.common.dto;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-
 import java.util.Objects;
 
 @SuppressWarnings("java:S1104")
 public class Meta {
 
-  @JsonInclude(value = JsonInclude.Include.NON_EMPTY)
   public String lastModified = null;
 
-//  @JsonInclude(value = JsonInclude.Include.NON_EMPTY)
   public String created = null;
 
   public ResourceTypeEnum resourceType = ResourceTypeEnum.User;

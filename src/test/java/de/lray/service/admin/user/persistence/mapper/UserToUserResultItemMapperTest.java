@@ -6,11 +6,14 @@ import de.lray.service.admin.user.persistence.entities.User;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
+
 class UserToUserResultItemMapperTest {
 
     @Test
     void should_map_all_properties() {
         // Given
+        var aBirthDate = LocalDate.of(2017,1,20);
         var aUser = new User();
         var aContact = new Contact();
         var aCredential = new Credentials();
@@ -18,6 +21,7 @@ class UserToUserResultItemMapperTest {
         aContact.setLastName("bla");
         aContact.setPrimaryEMail("lilow@nde.rs");
         aContact.setPhoneNumber("11833");
+        aContact.setBirthDate(aBirthDate);
 
         aUser.setContact(aContact);
         aCredential.setUsername("manamana");
@@ -37,6 +41,8 @@ class UserToUserResultItemMapperTest {
         Assertions.assertThat(result.phoneNumbers).hasSize(1).first()
                 .hasFieldOrPropertyWithValue("value","11833");
 
+        Assertions.assertThat(result.extension)
+                .hasFieldOrPropertyWithValue("birthDate", aBirthDate);
     }
 
     @Test
@@ -71,6 +77,4 @@ class UserToUserResultItemMapperTest {
         Assertions.assertThatThrownBy(() -> UserToUserResultItemMapper.map(aUser))
                 .isInstanceOf(NullPointerException.class);
     }
-
-
 }

@@ -3,7 +3,9 @@ package de.lray.service.admin;
 import de.lray.service.admin.user.dto.*;
 import de.lray.service.admin.user.operation.UserPatchOpAction;
 
+import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.Collections;
 
 public class ScimTestMessageFactory {
 
@@ -30,14 +32,19 @@ public class ScimTestMessageFactory {
     email.type = "work";
     email.display = "bjensen@example.com";
 
-    result.emails = Arrays.asList(email);
+    result.emails = Collections.singletonList(email);
+
+    var extension = new UserExtension();
+    extension.birthDate = LocalDate.of(1957, 9,29);
+
+    result.extension = extension;
 
     var phoneNumber = new UserPhone();
     phoneNumber.value = "+1 555-800-5729";
     phoneNumber.type = "work";
-    result.phoneNumbers = Arrays.asList(phoneNumber);
+    result.phoneNumbers = Collections.singletonList(phoneNumber);
 
-    result.roles = Arrays.asList("Tools View");
+    result.roles = Collections.singletonList("Tools View");
 
     result.meta.lastModified = "04-17-2020 00:00:00";
     result.meta.created = "04-17-2020 00:00:00";

@@ -10,7 +10,6 @@ import de.lray.service.admin.user.dto.*;
 import de.lray.service.admin.user.endpoint.*;
 import de.lray.service.JaxrsActivator;
 import de.lray.service.admin.user.exception.UserAlreadyExistsException;
-import de.lray.service.admin.user.exception.UserUnknownException;
 import de.lray.service.admin.user.operation.UserPatchOpAction;
 import de.lray.service.admin.user.persistence.UserRepository;
 import jakarta.ws.rs.client.Client;
@@ -54,7 +53,8 @@ public class UserAdminResourceTest {
                 .addPackage(UserAlreadyExistsException.class.getPackage())
                 .addClass(SimplePBKDF2Hasher.class)
                 .addClasses(UserAlreadyExistsExceptionMapper.class, UserUnknownExceptionMapper.class, Error.class, ConstraintViolationExceptionMapper.class)
-                .addClasses(UserAdminApi.class, UserAdminResource.class, JaxrsActivator.class);
+                .addClasses(UserAdminApi.class, UserAdminResource.class)
+                .addClasses(JaxrsActivator.class);
     }
 
     @ArquillianResource
@@ -151,7 +151,7 @@ public class UserAdminResourceTest {
 
             assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_OK);
             var responseEntity = response.readEntity(UserResource.class);
-            assertThat(responseEntity.schemas).hasSize(1).first().asString().contains("scim");
+            assertThat(responseEntity.schemas).hasSize(2).first().asString().contains("scim");
             assertThat(responseEntity).hasFieldOrPropertyWithValue("active", false);
             assertThat(responseEntity).hasFieldOrPropertyWithValue("userName", MOCKED_PATCH_USER);
         }

@@ -32,6 +32,7 @@ public abstract class UserAddToUserMapper {
             aContact.setLastName(payload.name.familyName);
             trySettingEMail(payload, aContact);
             trySettingPhoneNumber(payload, aContact);
+            trySettingBirthDate(payload, aContact);
             result.setContact(aContact);
         }
 
@@ -59,9 +60,18 @@ public abstract class UserAddToUserMapper {
         }
     }
 
+    private static void trySettingBirthDate(UserAdd payload, Contact aContact) {
+        try {
+            aContact.setBirthDate(payload.extension.birthDate);
+        } catch (NullPointerException npe) {
+            LOGGER.info("Registered user without birth date.");
+        }
+    }
+
     private static boolean hasContactRelevantDate(UserAdd payload) {
         return (payload.name != null && payload.name.familyName != null)
-                || (payload.emails != null && !payload.emails.isEmpty() && payload.emails.get(0).value!=null);
+                || (payload.emails != null && !payload.emails.isEmpty() && payload.emails.get(0).value!=null)
+                || (payload.extension != null && payload.extension.birthDate!=null);
     }
 
     private static boolean hasCredentialRelevantDate(UserAdd payload) {

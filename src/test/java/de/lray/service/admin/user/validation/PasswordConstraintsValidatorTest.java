@@ -6,6 +6,7 @@ import jakarta.validation.Validator;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.Set;
@@ -15,12 +16,8 @@ class PasswordConstraintsValidatorTest {
     private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
     private final FullConstrainDto target = new FullConstrainDto();
 
-    @Test
-    void whenPasswordNull_thenValid() throws Exception {
-        whenSecretNullOrValid_thenValid(null);
-    }
-
     @ParameterizedTest
+    @NullSource
     @ValueSource(strings = {"k@rmA-pa$$w0r|)"})
     void whenSecretNullOrValid_thenValid(String secret) throws Exception {
         // Given

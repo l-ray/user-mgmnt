@@ -1,6 +1,6 @@
 package de.lray.service.admin.providerconfig.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.json.bind.annotation.JsonbProperty;
 
 import java.util.Arrays;
@@ -23,9 +23,9 @@ public class ServiceProviderConfig {
     public Map<String, Boolean> sort = Map.of(SUPPORTED, false);
     public Map<String, Boolean> etag = Map.of(SUPPORTED, false);
 
-
+    // work-around for https://github.com/swagger-api/swagger-core/issues/2789
+    @Schema(name = "urn:okta:schemas:scim:providerconfig:1.0")
     @JsonbProperty(value = "urn:okta:schemas:scim:providerconfig:1.0")
-    @JsonProperty(value = "urn:okta:schemas:scim:providerconfig:1.0")
     public Map<String, List<String>> providerConfig = Map.of(
             "userManagementCapabilities", Arrays.asList(
                     "IMPORT_NEW_USERS",

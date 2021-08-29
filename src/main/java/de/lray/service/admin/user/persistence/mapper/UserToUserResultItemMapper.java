@@ -1,9 +1,6 @@
 package de.lray.service.admin.user.persistence.mapper;
 
-import de.lray.service.admin.user.dto.UserEmail;
-import de.lray.service.admin.user.dto.UserName;
-import de.lray.service.admin.user.dto.UserPhone;
-import de.lray.service.admin.user.dto.UserResultItem;
+import de.lray.service.admin.user.dto.*;
 import de.lray.service.admin.user.persistence.entities.Contact;
 import de.lray.service.admin.user.persistence.entities.Credentials;
 import de.lray.service.admin.user.persistence.entities.User;
@@ -37,6 +34,7 @@ public abstract class UserToUserResultItemMapper {
         result.id = item.getPublicId();
 
         mapCredentials(result, item.getCredentials() );
+        mapBirthDate(result, item.getContact() );
 
         result.name = mapUserName(item.getContact());
 
@@ -45,6 +43,15 @@ public abstract class UserToUserResultItemMapper {
 
         // result.roles = item.Roles.stream().map((elt) -> elt.Role.DisplayName).toList()
         return result;
+    }
+
+    private static void mapBirthDate(UserResultItem result, Contact contact) {
+        if (contact.getBirthDate() != null) {
+            if (result.extension == null) {
+                result.extension = new UserExtension();
+            }
+            result.extension.birthDate = contact.getBirthDate();
+        }
     }
 
     private static void mapCredentials(UserResultItem result, Credentials credentials) {

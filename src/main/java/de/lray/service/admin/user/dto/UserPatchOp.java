@@ -1,6 +1,6 @@
 package de.lray.service.admin.user.dto;
 
-import de.lray.service.admin.user.operation.UserPatchOpAction;
+import de.lray.service.admin.user.persistence.patch.UserPatchOpAction;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 

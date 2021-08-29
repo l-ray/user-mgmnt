@@ -15,6 +15,7 @@ import de.lray.service.admin.user.persistence.UserRepository;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.Response;
 import org.apache.http.HttpStatus;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -41,6 +42,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RunAsClient
 public class UserAdminResourceTest {
     private final static Logger LOGGER = Logger.getLogger(UserAdminResourceTest.class.getName());
+    public static final String ENDPOINT_URL = "api/scim/v2/Users/";
 
     @Deployment(testable = false)
     public static WebArchive createDeployment() {
@@ -80,7 +82,7 @@ public class UserAdminResourceTest {
     @DisplayName("User list should return no results.")
     void should_return_empty_user_list() throws MalformedURLException {
         LOGGER.info(" client: "+client+", baseURL: "+base);
-        final var userTarget = this.client.target(new URL(this.base, "api/scim/v2/Users").toExternalForm());
+        final var userTarget = getTarget(ENDPOINT_URL);
         try (final Response response = userTarget.request()
                 .accept(ServiceProviderConfigResource.SCIM_MEDIA_TYPE)
                 .get()) {
@@ -93,7 +95,7 @@ public class UserAdminResourceTest {
     @DisplayName("Single user should return result.")
     void should_return_single_user() throws MalformedURLException {
         LOGGER.info(" client: "+client+", baseURL: "+base);
-        final var userTarget = this.client.target(new URL(this.base, "api/scim/v2/Users/123").toExternalForm());
+        final var userTarget = getTarget(ENDPOINT_URL + "123");
         try (final Response response = userTarget.request()
                 .accept(ServiceProviderConfigResource.SCIM_MEDIA_TYPE)
                 .get()) {
@@ -106,7 +108,7 @@ public class UserAdminResourceTest {
     @DisplayName("Adding user should return error.")
     void should_return_already_exists_error_on_user_add() throws MalformedURLException {
         LOGGER.info(" client: "+client+", baseURL: "+base);
-        final var userTarget = this.client.target(new URL(this.base, "api/scim/v2/Users").toExternalForm());
+        final var userTarget = getTarget(ENDPOINT_URL);
 
         var payload = ScimTestMessageFactory.createUserAdd();
 
@@ -126,7 +128,7 @@ public class UserAdminResourceTest {
     @DisplayName("Updating user should return object.")
     void should_return_object_on_update() throws MalformedURLException {
         LOGGER.info(" client: "+client+", baseURL: "+base);
-        final var userTarget = this.client.target(new URL(this.base, "api/scim/v2/Users/3").toExternalForm());
+        final var userTarget = getTarget(ENDPOINT_URL+"3");
         try (final Response response = userTarget.request()
                 .accept(ServiceProviderConfigResource.SCIM_MEDIA_TYPE)
                 .put(json(ScimTestMessageFactory.createUserAdd()))) {
@@ -140,7 +142,7 @@ public class UserAdminResourceTest {
     @DisplayName("Patching user should return object.")
     void should_return_result_on_patch() throws MalformedURLException {
         LOGGER.info(" client: "+client+", baseURL: "+base);
-        final var userTarget = this.client.target(new URL(this.base, "api/scim/v2/Users/3").toExternalForm());
+        final var userTarget = getTarget(ENDPOINT_URL+"3");
         final var requestObject = ScimTestMessageFactory.createUserPatch();
 
         final var requestEntity = Entity.json(requestObject);
@@ -155,5 +157,9 @@ public class UserAdminResourceTest {
             assertThat(responseEntity).hasFieldOrPropertyWithValue("active", false);
             assertThat(responseEntity).hasFieldOrPropertyWithValue("userName", MOCKED_PATCH_USER);
         }
+    }
+
+    private WebTarget getTarget(String s) throws MalformedURLException {
+        return this.client.target(new URL(this.base, s).toExternalForm());
     }
 }

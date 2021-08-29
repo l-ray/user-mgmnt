@@ -8,9 +8,9 @@ import de.lray.service.admin.user.exception.UserAlreadyExistsException;
 import de.lray.service.admin.user.UserSearchCriteria;
 import de.lray.service.admin.user.exception.UserUnknownException;
 import de.lray.service.admin.user.dto.*;
-import de.lray.service.admin.user.operation.UserPatchFactory;
-import de.lray.service.admin.user.operation.UserPatchOpAction;
-import de.lray.service.admin.user.persistence.ConcreteUserRepository;
+import de.lray.service.admin.user.persistence.patch.UserPatchFactory;
+import de.lray.service.admin.user.persistence.patch.UserPatchOpAction;
+import de.lray.service.admin.user.persistence.JdbcUserRepository;
 import de.lray.service.admin.user.persistence.UserRepository;
 import de.lray.service.admin.user.persistence.entities.Contact;
 import de.lray.service.admin.user.persistence.entities.Credentials;
@@ -44,7 +44,7 @@ import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(ArquillianExtension.class)
-class ConcreteUserRepositoryTest {
+class JdbcUserRepositoryTest {
 
     @Deployment
     public static Archive<?> createDeployment() {
@@ -56,7 +56,7 @@ class ConcreteUserRepositoryTest {
                 .addPackage(UserAlreadyExistsException.class.getPackage())
                 .addPackage(UserPatchFactory.class.getPackage())
                 .addClasses(UserToUserResultItemMapper.class, UserToUserResourceMapper.class, UserAddToUserMapper.class)
-                .addPackage(ConcreteUserRepository.class.getPackage())
+                .addPackage(JdbcUserRepository.class.getPackage())
                 .addClass(Resources.class)
                 .addClass(ScimTestMessageFactory.class)
                 .addClass(SimplePBKDF2Hasher.class)
@@ -86,7 +86,7 @@ class ConcreteUserRepositoryTest {
         clearData();
         insertData();
         startTransaction();
-        underTest = new ConcreteUserRepository(em, new UserPatchFactory());
+        underTest = new JdbcUserRepository(em, new UserPatchFactory());
     }
 
     private void clearData() throws Exception {

@@ -1,11 +1,9 @@
-package de.lray.service.admin.user.operation;
+package de.lray.service.admin.user.persistence.patch;
 
 import de.lray.service.admin.user.dto.UserPatchOp;
 import de.lray.service.admin.user.persistence.entities.Credentials;
 
 public class ValueReplaceOp {
-
-    public static final String KEY = "replace";
 
     void apply(Credentials credential, UserPatchOp patchOp) {
         var patchOpVal = patchOp.value;

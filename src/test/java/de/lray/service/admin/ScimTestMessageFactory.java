@@ -1,7 +1,7 @@
 package de.lray.service.admin;
 
 import de.lray.service.admin.user.dto.*;
-import de.lray.service.admin.user.operation.UserPatchOpAction;
+import de.lray.service.admin.user.persistence.patch.UserPatchOpAction;
 
 import java.time.LocalDate;
 import java.util.Arrays;

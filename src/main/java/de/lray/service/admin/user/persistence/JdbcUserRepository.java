@@ -7,7 +7,7 @@ import de.lray.service.admin.user.dto.UserAdd;
 import de.lray.service.admin.user.dto.UserPatch;
 import de.lray.service.admin.user.dto.UserResource;
 import de.lray.service.admin.user.dto.UserResultItem;
-import de.lray.service.admin.user.operation.UserPatchFactory;
+import de.lray.service.admin.user.persistence.patch.UserPatchFactory;
 import de.lray.service.admin.user.persistence.entities.User;
 import de.lray.service.admin.user.dto.UserAddToUserMapper;
 import de.lray.service.admin.user.persistence.mapper.UserToUserResourceMapper;
@@ -16,39 +16,31 @@ import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
-import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import jakarta.transaction.Transactional;
-import jakarta.transaction.UserTransaction;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @RequestScoped
-public class ConcreteUserRepository implements UserRepository {
+public class JdbcUserRepository implements UserRepository {
 
-    static final String FIND_USER_BY_PUBLIC_ID_SQL = "SELECT c FROM User c WHERE c.publicId = :publicId";
+    public static final String USER_BY_PUBLIC_ID_QUERY_NAME = "USER_BY_PUBLIC_ID_QUERY";
 
     private final EntityManager entityManager;
 
     private final UserPatchFactory patchFactory;
 
-    private final TypedQuery<User> queryFindUserByPublicId;
-
     @Inject
-    public ConcreteUserRepository(
+    public JdbcUserRepository(
             EntityManager entityManager,
             UserPatchFactory patchFactory
     ) {
         this.patchFactory = patchFactory;
         this.entityManager = entityManager;
-
-        queryFindUserByPublicId = entityManager.createQuery(
-                FIND_USER_BY_PUBLIC_ID_SQL, User.class
-        );
     }
 
     @Override
@@ -115,7 +107,10 @@ public class ConcreteUserRepository implements UserRepository {
 
     private User findUserByPublicId(String id) {
         try {
-            return queryFindUserByPublicId.setParameter("publicId", id).getSingleResult();
+            return entityManager
+                    .createNamedQuery(USER_BY_PUBLIC_ID_QUERY_NAME, User.class)
+                    .setParameter("publicId", id)
+                    .getSingleResult();
         } catch (NoResultException ex) {
             throw new UserUnknownException("public id:".concat(id));
         }

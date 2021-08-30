@@ -11,6 +11,7 @@ public abstract class Keyable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SuppressWarnings("java:S1170")
     private final Long id = 0L;
 
     @Column(unique = true, nullable = false)

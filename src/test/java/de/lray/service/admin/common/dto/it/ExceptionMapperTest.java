@@ -104,11 +104,7 @@ public class ExceptionMapperTest {
                 .accept(MediaType.APPLICATION_JSON_TYPE)
                 .get()) {
 
-            var responseEntity = response.readEntity(Error.class);
-            assertThat(responseEntity.detail).contains("unknown user");
-            assertThat(responseEntity.status).isEqualTo(404);
-            assertThat(responseEntity.schemas).hasSize(1).first().asString().contains("scim");
-            assertThat(response.getStatus()).isEqualTo(404);
+            assertScimErrorResponseWithStatusAndDetail(response, 404, "unknown user");
         }
     }
 
@@ -121,11 +117,7 @@ public class ExceptionMapperTest {
                 .accept(MediaType.APPLICATION_JSON_TYPE)
                 .get()) {
 
-            var responseEntity = response.readEntity(Error.class);
-            assertThat(responseEntity.detail).contains("user creation");
-            assertThat(responseEntity.status).isEqualTo(400);
-            assertThat(responseEntity.schemas).hasSize(1).first().asString().contains("scim");
-            assertThat(response.getStatus()).isEqualTo(400);
+            assertScimErrorResponseWithStatusAndDetail(response, 400, "user creation");
         }
     }
 
@@ -139,11 +131,7 @@ public class ExceptionMapperTest {
                 .accept(MediaType.APPLICATION_JSON_TYPE)
                 .get()) {
 
-            var responseEntity = response.readEntity(Error.class);
-            assertThat(responseEntity.detail).contains("already exists");
-            assertThat(responseEntity.status).isEqualTo(409);
-            assertThat(responseEntity.schemas).hasSize(1).first().asString().contains("scim");
-            assertThat(response.getStatus()).isEqualTo(409);
+            assertScimErrorResponseWithStatusAndDetail(response, 409, "already exists");
         }
     }
 
@@ -156,11 +144,7 @@ public class ExceptionMapperTest {
                 .accept(MediaType.APPLICATION_JSON_TYPE)
                 .get()) {
 
-            var responseEntity = response.readEntity(Error.class);
-            assertThat(responseEntity.detail).contains("");
-            assertThat(responseEntity.status).isEqualTo(400);
-            assertThat(responseEntity.schemas).hasSize(1).first().asString().contains("scim");
-            assertThat(response.getStatus()).isEqualTo(400);
+            assertScimErrorResponseWithStatusAndDetail(response, 400, "");
         }
     }
 
@@ -173,12 +157,16 @@ public class ExceptionMapperTest {
                 .accept(MediaType.APPLICATION_JSON_TYPE)
                 .get()) {
 
-            var responseEntity = response.readEntity(Error.class);
-            assertThat(responseEntity.detail).contains("");
-            assertThat(responseEntity.status).isEqualTo(400);
-            assertThat(responseEntity.schemas).hasSize(1).first().asString().contains("scim");
-            assertThat(response.getStatus()).isEqualTo(400);
+            assertScimErrorResponseWithStatusAndDetail(response, 400, "");
         }
+    }
+
+    private void assertScimErrorResponseWithStatusAndDetail(Response response, int httpStatus, String details) {
+        var responseEntity = response.readEntity(Error.class);
+        assertThat(responseEntity.detail).contains(details);
+        assertThat(responseEntity.status).isEqualTo(httpStatus);
+        assertThat(responseEntity.schemas).hasSize(1).first().asString().contains("scim");
+        assertThat(response.getStatus()).isEqualTo(httpStatus);
     }
 
 }

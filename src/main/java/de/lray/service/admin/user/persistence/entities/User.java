@@ -5,12 +5,10 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "user")
-@NamedQueries({
-        @NamedQuery(
-                name = JdbcUserRepository.USER_BY_PUBLIC_ID_QUERY_NAME,
-                query = "SELECT c FROM User c WHERE c.publicId = :publicId"
-        )
-})
+@NamedQuery(
+        name = JdbcUserRepository.USER_BY_PUBLIC_ID_QUERY_NAME,
+        query = "SELECT c FROM User c WHERE c.publicId = :publicId"
+)
 public class User extends Keyable {
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)

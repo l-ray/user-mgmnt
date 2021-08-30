@@ -83,24 +83,20 @@ public class UserAdminResource implements UserAdminApi {
     @Override
     public UserResource addUser(UserAdd payload) {
         LOGGER.info("Post new user {}", payload);
-        UserResource response = repository.addUser(payload);
-        return response;
+        return repository.addUser(payload);
     }
 
     @Override
     public UserResource updateUser(String userId, UserAdd payload) {
         LOGGER.info("Put user by userId {}: {}", userId, payload);
-        UserResource response = repository.updateUser(userId, payload);
-        return response;
+        return repository.updateUser(userId, payload);
     }
 
     @Override
     @PATCH
     public UserResource patchUser(String userId, UserPatch payload) {
         LOGGER.info("patch user by userId {}:{}", userId, payload);
-
-        UserResource response = repository.patchUser(userId, payload);
-        return response;
+        return repository.patchUser(userId, payload);
     }
 
 }

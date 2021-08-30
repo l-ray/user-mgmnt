@@ -10,12 +10,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public abstract class UserToUserResultItemMapper {
+public interface UserToUserResultItemMapper {
 
-    static final String REST_DATETIME_FORMAT = "dd-MM-yy hh:mm:ss";
-    static final String CONTACT_TYPE_WORK_STRING = "work";
-
-    private UserToUserResultItemMapper() { /* keep it static */ }
+    String REST_DATETIME_FORMAT = "dd-MM-yy hh:mm:ss";
+    String CONTACT_TYPE_WORK_STRING = "work";
 
     public static UserResultItem map(User item) {
         var dateFormatter = new SimpleDateFormat(REST_DATETIME_FORMAT);
@@ -26,7 +24,7 @@ public abstract class UserToUserResultItemMapper {
         return result;
     }
 
-    protected static UserResultItem mapToResultDto(User item, UserResultItem result) {
+    static UserResultItem mapToResultDto(User item, UserResultItem result) {
         Objects.requireNonNull(item.getCredentials(), "No credential object on user " + item.getId());
 
         result = result == null ? new UserResultItem() : result;

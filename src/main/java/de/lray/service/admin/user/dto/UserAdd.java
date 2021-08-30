@@ -10,7 +10,7 @@ import java.util.StringJoiner;
 public class UserAdd extends UserResource {
 
   @Size(min=8)
-  @PasswordConstraints(message = "Password is not compliant.")
+  @PasswordConstraints(message = "Password is not compliant.", containsSpecialChar = false)
   protected String password = null;
 
   public void setPassword(String password) {

@@ -26,7 +26,7 @@ For the [TL;DR](https://www.urbandictionary.com/define.php?term=tl%3Bdr) - appro
 ### Using Docker
 In case of version conflicts on the target machine (e.g. JDK), building and starting a local docker container is a potential workaround to test the service:
 - copy the latest built ```target/user.war``` file to the ```docker``` directory 
-  - _(alternatively download it from https://github.com/l-ray/user-mgmnt)_
+  - _(alternatively download a version from [github](https://github.com/l-ray/user-mgmnt/releases/download/v0.2-alpha/user.war))_
 - change to the ```docker``` directory and build/run the container  
   ```shell
   cd docker
@@ -103,3 +103,4 @@ The following minimal filters are supported as ```GET``` parameter, they can not
 ## Challenges known
 - Resteasy does not forward Runtime exceptions to exception mapper without server-specific dependencies. As result e.g., NPEs are not caught correctly.
 - user patching is a minimal first-draft implementation at the moment.
+- the json schema definition is mocked. Bringing this to the next level could bring advantages.

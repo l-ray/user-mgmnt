@@ -14,7 +14,7 @@ public class ServiceProviderConfig {
             "urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig"
     );
     public static final String SUPPORTED = "supported";
-    public String documentationUrl = "https://support.okta.com/scim-fake-page.html";
+    public String documentationUrl = "https://github.com/l-ray/user-mgmnt";
     public List<String> authenticationSchemes = Arrays.asList();
     public Map<String, Boolean> patch = Map.of(SUPPORTED, true);
     public Map<String, Boolean> bulk = Map.of(SUPPORTED, false);

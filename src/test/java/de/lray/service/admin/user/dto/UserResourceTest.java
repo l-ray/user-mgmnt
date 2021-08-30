@@ -38,7 +38,7 @@ class UserResourceTest extends AbstractDtoTest<UserResource> {
         item.displayName = "test";
         item.preferredLanguage = "de";
         item.timezone = "UTC";
-        item.locale = "DE_de";
+        item.locale = "de-DE";
         return item;
     }
 }

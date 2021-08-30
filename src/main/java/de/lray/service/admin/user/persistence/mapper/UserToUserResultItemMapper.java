@@ -27,14 +27,13 @@ public abstract class UserToUserResultItemMapper {
     }
 
     protected static UserResultItem mapToResultDto(User item, UserResultItem result) {
-        Objects.requireNonNull(item.getContact(), "No contact object on user " + item.getId());
         Objects.requireNonNull(item.getCredentials(), "No credential object on user " + item.getId());
 
         result = result == null ? new UserResultItem() : result;
         result.id = item.getPublicId();
 
-        mapCredentials(result, item.getCredentials() );
-        mapBirthDate(result, item.getContact() );
+        mapCredentials(result, item.getCredentials());
+        mapBirthDate(result, item.getContact());
 
         result.name = mapUserName(item.getContact());
 
@@ -46,7 +45,7 @@ public abstract class UserToUserResultItemMapper {
     }
 
     private static void mapBirthDate(UserResultItem result, Contact contact) {
-        if (contact.getBirthDate() != null) {
+        if (contact != null && contact.getBirthDate() != null) {
             if (result.extension == null) {
                 result.extension = new UserExtension();
             }
@@ -63,7 +62,7 @@ public abstract class UserToUserResultItemMapper {
     private static List<UserPhone> mapPhones(Contact contact) {
         var item = new UserPhone();
         item.type = CONTACT_TYPE_WORK_STRING;
-        item.value = contact.getPhoneNumber();
+        item.value = contact == null ? null : contact.getPhoneNumber();
         return (item.value == null) ? Collections.emptyList() : List.of(item);
     }
 
@@ -71,15 +70,18 @@ public abstract class UserToUserResultItemMapper {
         var item = new UserEmail();
         item.primary = true;
         item.type = CONTACT_TYPE_WORK_STRING;
-        item.value = contact.getPrimaryEMail();
+        item.value = contact == null ? null : contact.getPrimaryEMail();
         return (item.value == null) ? Collections.emptyList() : List.of(item);
     }
 
     private static UserName mapUserName(Contact contact) {
-        var item = new UserName();
-        item.givenName = contact.getFirstName();
-        // item.middleName = user.MiddleName;
-        item.familyName = contact.getLastName();
-        return item;
+        if (contact != null) {
+            var item = new UserName();
+            item.givenName = contact.getFirstName();
+            item.familyName = contact.getLastName();
+            return item;
+        } else {
+            return null;
+        }
     }
 }

@@ -15,7 +15,7 @@ public interface UserToUserResultItemMapper {
     String REST_DATETIME_FORMAT = "dd-MM-yy hh:mm:ss";
     String CONTACT_TYPE_WORK_STRING = "work";
 
-    public static UserResultItem map(User item) {
+    static UserResultItem map(User item) {
         var dateFormatter = new SimpleDateFormat(REST_DATETIME_FORMAT);
         var result = mapToResultDto(item, new UserResultItem());
         result.meta.lastModified = dateFormatter.format(item.getUpdateDate());
@@ -73,13 +73,12 @@ public interface UserToUserResultItemMapper {
     }
 
     private static UserName mapUserName(Contact contact) {
-        if (contact != null) {
-            var item = new UserName();
-            item.givenName = contact.getFirstName();
-            item.familyName = contact.getLastName();
-            return item;
-        } else {
+        if (contact == null) {
             return null;
         }
+        var item = new UserName();
+        item.givenName = contact.getFirstName();
+        item.familyName = contact.getLastName();
+        return item;
     }
 }

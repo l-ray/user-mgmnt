@@ -80,6 +80,6 @@ public class Credentials extends Keyable {
     }
 
     SimplePBKDF2Hasher createHasher(String aPW, String salt) throws InvalidKeySpecException, NoSuchAlgorithmException {
-        return new SimplePBKDF2Hasher(aPW, salt);
+        return SimplePBKDF2Hasher.of(aPW, salt);
     }
 }

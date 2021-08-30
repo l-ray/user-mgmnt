@@ -8,7 +8,7 @@ import java.util.Locale;
 
 public interface UserToUserResourceMapper {
 
-    public static UserResource map(User item) {
+    static UserResource map(User item) {
         var result = new UserResource();
         UserToUserResultItemMapper.mapToResultDto(item, result);
         result.displayName = result.name != null

@@ -33,7 +33,7 @@ class AgeRangeConstraintValidatorTest {
 
     @ParameterizedTest
     @MethodSource("invalidDateArguments")
-    void whenDateOutsideRange_thenFail(LocalDate item) throws Exception {
+    void whenDateOutsideRange_thenFail(LocalDate item) {
         // Given
         target.birthDate = item;
         // When
@@ -60,9 +60,9 @@ class AgeRangeConstraintValidatorTest {
         );
     }
 
-    private void assertNoViolation(Set constraintViolations) {
+    private void assertNoViolation(Set<ConstraintViolation<AgeRangeConstraintValidatorTest.BirthdayDto>> constraintViolations) {
         Assertions.assertThat(
-                constraintViolations.stream().map(t -> ((ConstraintViolation) t).getMessage()))
+                constraintViolations.stream().map(ConstraintViolation::getMessage))
                 .isEmpty();
     }
 

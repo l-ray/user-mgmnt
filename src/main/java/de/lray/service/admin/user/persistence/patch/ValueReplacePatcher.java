@@ -3,9 +3,15 @@ package de.lray.service.admin.user.persistence.patch;
 import de.lray.service.admin.user.dto.UserPatchOp;
 import de.lray.service.admin.user.persistence.entities.Credentials;
 
-public class ValueReplaceOp {
+public class ValueReplacePatcher implements ValuePatcher {
 
-    void apply(Credentials credential, UserPatchOp patchOp) {
+    @Override
+    public boolean canApply(UserPatchOp op) {
+        return op.op == UserPatchOpAction.replace;
+    }
+
+    @Override
+    public void apply(Credentials credential, UserPatchOp patchOp) {
         var patchOpVal = patchOp.value;
 
         if (patchOpVal.active != null) {

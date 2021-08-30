@@ -11,16 +11,24 @@ import java.util.Objects;
 
 public class SimplePBKDF2Hasher {
 
+    public static final String PBKDF_2_WITH_HMAC_SHA_1 = "PBKDF2WithHmacSHA1";
     final String password;
 
     final byte[] salt;
     final byte[] hash;
 
-    public SimplePBKDF2Hasher(String password) throws InvalidKeySpecException, NoSuchAlgorithmException {
-        this(password, null);
+    public static SimplePBKDF2Hasher of(String password)
+            throws InvalidKeySpecException, NoSuchAlgorithmException {
+        return SimplePBKDF2Hasher.of(password, null);
     }
 
-    public SimplePBKDF2Hasher(String password, String saltAsString) throws InvalidKeySpecException, NoSuchAlgorithmException {
+    public static SimplePBKDF2Hasher of(String password, String saltAsString)
+            throws InvalidKeySpecException, NoSuchAlgorithmException {
+        final var hasher = new SimplePBKDF2Hasher(password, saltAsString);
+        return hasher;
+    }
+
+    private SimplePBKDF2Hasher(String password, String saltAsString) throws InvalidKeySpecException, NoSuchAlgorithmException {
         Objects.requireNonNull(password);
         this.password = password;
         this.salt = saltAsString == null
@@ -38,7 +46,7 @@ public class SimplePBKDF2Hasher {
 
     private byte[] generatePasswordHash() throws InvalidKeySpecException, NoSuchAlgorithmException {
         KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, 65536, 128);
-        SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+        SecretKeyFactory factory = SecretKeyFactory.getInstance(PBKDF_2_WITH_HMAC_SHA_1);
         return factory.generateSecret(spec).getEncoded();
     }
 

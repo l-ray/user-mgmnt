@@ -10,14 +10,21 @@ import java.util.Objects;
 @ApplicationScoped
 public class UserPatchFactory {
 
+  private final List<ValuePatcher> ops;
+
+  public UserPatchFactory() {
+    this.ops = List.of(
+            new ValueReplacePatcher()
+    );
+  }
+
   public void apply(User user, List<UserPatchOp> ops) {
     for (UserPatchOp op : ops) {
-      Objects.requireNonNull(op.op, "Operation can nott be null");
-      switch (op.op) {
-        case replace: new ValueReplaceOp().apply(user.getCredentials(), op);
-          break;
-        default: throw new IllegalArgumentException("Unknown operation ${op.op}");
-      }
+      Objects.requireNonNull(op.op, "Operation can not be null");
+      var opPatcher = this.ops.stream()
+              .filter((ValuePatcher vpo) -> vpo.canApply(op))
+              .findFirst().orElseThrow(() -> new IllegalArgumentException("Unknown operation ${op.op}"));
+      opPatcher.apply(user.getCredentials(), op);
     }
   }
 

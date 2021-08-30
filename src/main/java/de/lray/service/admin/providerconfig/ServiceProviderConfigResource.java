@@ -4,7 +4,6 @@ import de.lray.service.admin.providerconfig.dto.ServiceProviderConfig;
 import de.lray.service.admin.providerconfig.endpoint.ServiceProviderConfigApi;
 import org.slf4j.LoggerFactory;
 
-
 public class ServiceProviderConfigResource implements ServiceProviderConfigApi {
 
     public static final String SCIM_MEDIA_TYPE = "application/scim+json";

@@ -60,8 +60,4 @@ public abstract class Keyable {
     public Date getUpdateDate() {
         return updateDate;
     }
-
-    public void setUpdateDate(Date updateDate) {
-        this.updateDate = updateDate;
-    }
 }

@@ -4,7 +4,7 @@ public class TestMessage {
     public String message = null;
 
     public TestMessage() {
-
+        /* make JSON mapper happy */
     }
 
     public TestMessage(String msg) {

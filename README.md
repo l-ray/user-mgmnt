@@ -82,8 +82,9 @@ The main [user-entity](https://github.com/l-ray/user-mgmnt/blob/master/src/main/
 A [credential-entity](https://github.com/l-ray/user-mgmnt/blob/master/src/main/java/de/lray/service/admin/user/persistence/entities/Credentials.java), used during the login-process, holds a foreign key to the user-entity. By this, during the login process no direct access to the concrete user-entity is needed.
 The user-entity holds a foreign key to the [contact-entity](https://github.com/l-ray/user-mgmnt/blob/master/src/main/java/de/lray/service/admin/user/persistence/entities/Contact.java). By separating user and contact, potential policies of persisting system data and personal data separately are (hopefully) met. 
 
-Beside the internal ID, a public ID is given to all entities. It is an alphanumeric hash and we use it for endpoint-communication. The public id can be given from an external source and potentially also changed without corrupting any data. It prevents from hacking attacks based on id-guessing. 
-### Password persistence
+#### Public Ids
+Beside the internal Id, a public Id is given to all entities - it is an alphanumeric hash. We use it for endpoint-communication. The public id can be given from an external source and potentially also changed without corrupting any data. It's a soft protection towards attacks based on id-guessing. 
+#### Password persistence
 For the sake of this example, the service persists the user password's hash and salt only. It offers a method to check a password for correctness, without giving a way to reproduce the original password.
 
 ### Endpoints
@@ -98,3 +99,7 @@ For changing existing user-data, two http methods are used:
 The following minimal filters are supported as ```GET``` parameter, they can not be concatenated.
 - ```filter=userName eq "test.user@email.local"```
 - ```filter=lastModified gt "2021-11-11T04:42:34Z"```
+
+## Challenges known
+- Resteasy does not forward Runtime exceptions to exception mapper without server-specific dependencies. As result e.g., NPEs are not caught correctly.
+- user patching is a minimal first-draft implementation at the moment.

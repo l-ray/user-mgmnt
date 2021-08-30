@@ -22,7 +22,7 @@ For the [TL;DR](https://www.urbandictionary.com/define.php?term=tl%3Bdr) - appro
       -Dwildfly.version=24.0.1.Final
   ```
 - open in your browser: [http://localhost:8080/user/](http://localhost:8080/user/) for a Swagger-UI Endpoint interface
-
+  ![Screenshot SwaggerUI](static/screenshot_swaggerui.png)
 ### Optional
 Test-drive the service using Okta.
 - create user-war ```mvn package``` and deploy to an outside-available Wildfly instance
@@ -70,6 +70,7 @@ The main [user-entity](https://github.com/l-ray/user-mgmnt/blob/master/src/main/
 A [credential-entity](https://github.com/l-ray/user-mgmnt/blob/master/src/main/java/de/lray/service/admin/user/persistence/entities/Credentials.java), used during the login-process, holds a foreign key to the user-entity. By this, during the login process no direct access to the concrete user-entity is needed.
 The user-entity holds a foreign key to the [contact-entity](https://github.com/l-ray/user-mgmnt/blob/master/src/main/java/de/lray/service/admin/user/persistence/entities/Contact.java). By separating user and contact, potential policies of persisting system data and personal data separately are (hopefully) met. 
 
+Beside the internal ID, a public ID is given to all entities. It is an alphanumeric hash and we use it for endpoint-communication. The public id can be given from an external source and potentially also changed without corrupting any data. It prevents from hacking attacks based on id-guessing. 
 ### Password persistence
 For the sake of this example, the service persists the user password's hash and salt only. It offers a method to check a password for correctness, without giving a way to reproduce the original password.
 

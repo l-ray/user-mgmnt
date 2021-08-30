@@ -143,7 +143,7 @@ class JdbcUserRepositoryTest {
     }
 
     @Test
-    public void should_find_all_users() throws Exception {
+    void should_find_all_users() throws Exception {
         // when
         List<UserResultItem> retrievedUser = underTest.getUsers(UserSearchCriteria.builder().build());
 
@@ -157,7 +157,7 @@ class JdbcUserRepositoryTest {
     }
 
     @Test
-    public void whenItemsPerPageBeyondUserCount_returnsLimitedUserSet() {
+    void whenItemsPerPageBeyondUserCount_returnsLimitedUserSet() {
         // given
         var criteriaLow = UserSearchCriteria.builder()
                 .setStartIndex(1)

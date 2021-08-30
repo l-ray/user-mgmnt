@@ -6,9 +6,7 @@ import de.lray.service.admin.user.persistence.entities.User;
 import java.util.Calendar;
 import java.util.Locale;
 
-public abstract class UserToUserResourceMapper {
-
-    private UserToUserResourceMapper() { /* keep it static */ }
+public interface UserToUserResourceMapper {
 
     public static UserResource map(User item) {
         var result = new UserResource();

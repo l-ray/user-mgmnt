@@ -21,8 +21,20 @@ For the [TL;DR](https://www.urbandictionary.com/define.php?term=tl%3Bdr) - appro
       -Dwildfly.artifactId=wildfly-preview-dist \
       -Dwildfly.version=24.0.1.Final
   ```
-- open in your browser: [http://localhost:8080/user/](http://localhost:8080/user/) for a Swagger-UI Endpoint interface
+- open [http://localhost:8080/user/](http://localhost:8080/user/) in your browser for a Swagger-UI Endpoint interface
   ![Screenshot SwaggerUI](static/screenshot_swaggerui.png)
+### Using Docker
+In case of version conflicts on the target machine (e.g. JDK), building and starting a local docker container is a potential workaround to test the service:
+- copy the latest built ```target/user.war``` file to the ```docker``` directory 
+  - _(alternatively download it from https://github.com/l-ray/user-mgmnt)_
+- change to the ```docker``` directory and build/run the container  
+  ```shell
+  cd docker
+  docker build . -t user-on-wildfly
+  docker run -d  -p8080:8080 user-on-wildfly
+  ```
+- wait a moment until the instance started up in the background ☕ 
+- open [http://localhost:8080/user/](http://localhost:8080/user/) in your browser
 ### Optional
 Test-drive the service using Okta.
 - create user-war ```mvn package``` and deploy to an outside-available Wildfly instance

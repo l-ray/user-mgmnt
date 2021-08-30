@@ -13,11 +13,12 @@ public abstract class UserToUserResourceMapper {
     public static UserResource map(User item) {
         var result = new UserResource();
         UserToUserResultItemMapper.mapToResultDto(item, result);
-
-        result.displayName = result.name.givenName.concat(" ").concat(result.name.familyName);
+        result.displayName = result.name != null
+                ? result.name.givenName.concat(" ").concat(result.name.familyName)
+                : "unknown - ".concat(result.id);
         result.preferredLanguage = "DE";
         result.locale = Locale.getDefault().toString();
-        result.timezone = Calendar.getInstance().getTimeZone().getDisplayName();
+        result.timezone = Calendar.getInstance().getTimeZone().getID();
         return result;
     }
 }

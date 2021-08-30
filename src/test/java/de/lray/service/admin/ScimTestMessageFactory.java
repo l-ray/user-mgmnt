@@ -13,6 +13,15 @@ public class ScimTestMessageFactory {
 
   private ScimTestMessageFactory() { }
 
+  public static UserAdd createMinimalUserAdd() {
+    var result = new UserAddWithPasswordGetter();
+    result.userName = "k@rl.io";
+    result.active = true;
+
+    result.setPassword("aSecr€t1");
+    return result;
+  }
+
   public static UserAdd createUserAdd() {
     var result = new UserAddWithPasswordGetter();
     result.id = EXAMPLE_ID;

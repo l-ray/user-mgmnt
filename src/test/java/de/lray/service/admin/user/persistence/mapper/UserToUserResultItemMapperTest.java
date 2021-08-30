@@ -67,14 +67,4 @@ class UserToUserResultItemMapperTest {
         Assertions.assertThatThrownBy(() -> UserToUserResultItemMapper.map(aUser))
                 .isInstanceOf(NullPointerException.class);
     }
-
-    @Test
-    void should_fail_without_contact() {
-        // Given
-        var aUser = new User();
-        aUser.setCredentials(new Credentials());
-        // When / Then
-        Assertions.assertThatThrownBy(() -> UserToUserResultItemMapper.map(aUser))
-                .isInstanceOf(NullPointerException.class);
-    }
 }

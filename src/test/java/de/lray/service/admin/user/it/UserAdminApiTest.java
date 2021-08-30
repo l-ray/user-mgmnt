@@ -9,6 +9,7 @@ import de.lray.service.admin.providerconfig.ServiceProviderConfigResource;
 import de.lray.service.admin.user.UserAdminResource;
 import de.lray.service.admin.user.UserSearchCriteria;
 import de.lray.service.admin.user.authentication.SimplePBKDF2Hasher;
+import de.lray.service.admin.user.dto.UserAdd;
 import de.lray.service.admin.user.dto.UserResource;
 import de.lray.service.admin.user.dto.UserResult;
 import de.lray.service.admin.user.endpoint.ConstraintViolationExceptionMapper;
@@ -92,6 +93,25 @@ public class UserAdminApiTest {
         LOGGER.info("call AfterEach");
         if (this.client != null) {
             this.client.close();
+        }
+    }
+
+    @Test
+    @DisplayName("Adding minimal user should return it.")
+    void should_successful_add_minimum_detailed_user() throws MalformedURLException {
+        // Given
+        final var userTarget = getTarget(ENDPOINT_URL);
+        var payload = ScimTestMessageFactory.createMinimalUserAdd();
+
+        // When
+        try (final Response response = userTarget.request(ServiceProviderConfigResource.SCIM_MEDIA_TYPE)
+                .accept(ServiceProviderConfigResource.SCIM_MEDIA_TYPE)
+                .post(json(payload))) {
+
+            // Then
+            assertThat(response.getStatus()).isEqualTo(200);
+            var responseEntity = response.readEntity(UserAdd.class);
+            assertThat(responseEntity.id).isNotNull();
         }
     }
 

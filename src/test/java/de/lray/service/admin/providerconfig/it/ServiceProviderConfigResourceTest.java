@@ -63,7 +63,8 @@ public class ServiceProviderConfigResourceTest {
     @DisplayName("Service provider config should return results.")
     void should_return_service_provider_config() throws MalformedURLException {
         LOGGER.info(" client: "+client+", baseURL: "+base);
-        final var userTarget = this.client.target(new URL(this.base, "api/scim/v2/ServiceProviderConfig").toExternalForm());
+        final var userTarget = this.client
+                .target(new URL(this.base, "api/scim/v2/ServiceProviderConfig").toExternalForm());
         try (final Response response = userTarget.request()
                 .accept(ServiceProviderConfigResource.SCIM_MEDIA_TYPE)
                 .get()) {

@@ -5,17 +5,12 @@ import de.lray.service.admin.user.endpoint.UserAdminApi;
 import de.lray.service.admin.user.persistence.UserRepository;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.PATCH;
-import jakarta.ws.rs.container.ContainerRequestContext;
-import jakarta.ws.rs.core.Context;
-import jakarta.ws.rs.core.HttpHeaders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
-
 
 @RequestScoped
 public class UserAdminResource implements UserAdminApi {
@@ -27,12 +22,6 @@ public class UserAdminResource implements UserAdminApi {
     static final String REST_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
 
     static final Logger LOGGER = LoggerFactory.getLogger(UserAdminResource.class);
-
-    @Context
-    HttpHeaders httpHeaders = null;
-
-    @Context
-    ContainerRequestContext containerRequestContext = null;
 
     @Inject
     UserRepository repository = null;
@@ -93,10 +82,8 @@ public class UserAdminResource implements UserAdminApi {
     }
 
     @Override
-    @PATCH
     public UserResource patchUser(String userId, UserPatch payload) {
         LOGGER.info("patch user by userId {}:{}", userId, payload);
         return repository.patchUser(userId, payload);
     }
-
 }

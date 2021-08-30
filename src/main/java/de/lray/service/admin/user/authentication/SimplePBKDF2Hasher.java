@@ -24,8 +24,7 @@ public class SimplePBKDF2Hasher {
 
     public static SimplePBKDF2Hasher of(String password, String saltAsString)
             throws InvalidKeySpecException, NoSuchAlgorithmException {
-        final var hasher = new SimplePBKDF2Hasher(password, saltAsString);
-        return hasher;
+        return new SimplePBKDF2Hasher(password, saltAsString);
     }
 
     private SimplePBKDF2Hasher(String password, String saltAsString) throws InvalidKeySpecException, NoSuchAlgorithmException {
